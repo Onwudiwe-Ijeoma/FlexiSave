@@ -57,6 +57,14 @@
 
             <!-- Main Content Area -->
             <div class="content-area">
+                <h2>Good Morning Daniel Ibuchi</h2>
+                <p><span>Your lastlogin</span> 06-January-2025</p>
+                <p><span>BVN</span>00976543333</p>
+                <p><span>Token Serial Number</span>Token is not attatched to this account</p>
+                <p><span>NIN</span>97987654333333</p>
+
+
+
                 <router-view></router-view>
             </div>
 
@@ -64,10 +72,10 @@
             <div class="ads-sidebar">
                 <!-- Add your advertisement content here -->
                 <div class="ad-box">
-                    <img src="@/assets/discount-ad.jpg" alt="Discount Sale" class="ad-image">
+                    <img src="@/assets/topimage.svg" alt="Discount Sale" class="ad-image">
                 </div>
                 <div class="ad-box">
-                    <!-- <img src="@/assets/mobile-banking-ad.jpg" alt="Mobile Banking" class="ad-image"> -->
+                    <img src="@/assets/bottomImage.svg" alt="Mobile Banking" class="ad-image">
                 </div>
             </div>
         </div>
