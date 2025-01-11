@@ -129,7 +129,9 @@ const handleSubmit = async () => {
         const response = await authService.login(credentials);
         
         if (response.status === 200) {
-            localStorage.setItem('token', response.data.token);
+          console.log(response.data.accessToken);
+            localStorage.setItem('token', response.data.accessToken);
+            
             
             if (response.data.user) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
