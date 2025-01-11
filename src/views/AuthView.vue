@@ -129,7 +129,6 @@ const handleSubmit = async () => {
         const response = await authService.login(credentials);
         
         if (response.status === 200) {
-          console.log(response.data.accessToken);
             localStorage.setItem('token', response.data.accessToken);
             
             
