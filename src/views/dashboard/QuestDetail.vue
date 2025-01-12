@@ -122,11 +122,11 @@ const leaveQuest = async (id) => {
             <div class="flex flex-row flex-wrap justify-start">
                 <div class="flex justify-start text-center m-2 h-24 w-full">
                     <div
-                        class="flex-shrink-0 rounded-full bg-gray-100 w-24 h-24 border border-orange-500 z-10 flex justify-center items-center">
-                        <i class='bx bxs-quote-left text-6xl p-2 w-24 h-24 text-orange-500 opacity-60'></i>
+                        class="flex-shrink-0 rounded-full bg-gray-100 w-24 h-24 border border-[#e65100] z-10 flex justify-center items-center">
+                        <i class='bx bxs-quote-left text-6xl p-2 w-24 h-24 text-[#e65100] opacity-60'></i>
                     </div>
                     <div
-                        class="flex flex-col text-left bg-orange-500 text-white text-xs self-center pl-16 pr-4 py-2 -ml-12 w-full">
+                        class="flex flex-col text-left bg-[#e65100] text-white text-xs self-center pl-16 pr-4 py-2 -ml-12 w-full">
                         <h3 class="text-lg  uppercase">{{ quest.name }}</h3>
                         <p class="w-64 text-xs overflow-y-hidden overflow-x-auto">{{ quest.description }}</p>
                     </div>
@@ -162,7 +162,7 @@ const leaveQuest = async (id) => {
                 <div class="col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
-                            class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-orange-500">
+                            class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-[#e65100]">
                             <i class='bx bx-target-lock text-2xl'></i>
                         </div>
                         <div class="flex flex-col flex-grow ml-4">
@@ -198,7 +198,7 @@ const leaveQuest = async (id) => {
                 <div class="col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
-                            class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-orange-500">
+                            class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-[#e65100]">
                             <i class='bx bx-calendar text-2xl'></i>
                         </div>
                         <div class="flex flex-col flex-grow ml-4">
@@ -212,11 +212,11 @@ const leaveQuest = async (id) => {
 
 
         <section class="my-10">
-            <h3 class="text-xl font-bold  my-4 text-orange-500">LeaderBoard</h3>
+            <h3 class="text-xl font-bold  my-4 text-[#e65100]">LeaderBoard</h3>
             <div class="overflow-hidden w-full overflow-x-auto rounded-md border border-neutral-300">
                 <table class="w-full text-left text-sm text-neutral-600 ">
                     <thead class="border-b border-neutral-300 bg-neutral-50 text-sm text-neutral-900 ">
-                        <tr class="bg-orange-500 text-white">
+                        <tr class="bg-[#e65100] text-white">
                             <th scope="col" class="p-4">S/N</th>
                             <th scope="col" class="p-4">Name</th>
                             <th scope="col" class="p-4">Rank</th>

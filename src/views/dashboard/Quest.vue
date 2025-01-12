@@ -138,7 +138,7 @@ const deleteQuest = async (id) => {
             <div class="overflow-hidden w-full overflow-x-auto rounded-md border border-neutral-300">
                 <table class="w-full text-left text-sm text-neutral-600">
                     <thead class="border-b border-neutral-300 bg-neutral-50 text-sm text-neutral-900">
-                        <tr class="bg-orange-500 text-white">
+                        <tr class="bg-[#e65100]  text-white">
                             <th scope="col" class="p-4">S/N</th>
                             <th scope="col" class="p-4">Quest</th>
                             <th scope="col" class="p-4">Target Amount</th>
