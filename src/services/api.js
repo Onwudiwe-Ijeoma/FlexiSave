@@ -61,6 +61,7 @@ export const questService = {
       throw error;
     }
   },
+  getOne: (questId) => api.get(`/api/quests/${questId}`),
   create: async (questData) => {
     try {
       const response = await api.post(API_ENDPOINTS.QUEST.CREATE, questData);
@@ -69,18 +70,21 @@ export const questService = {
       console.error('API Error:', error.response?.data || error.message);
       throw error;
     }
-  }
+  },
+  joinQuest: (questId) => api.post(`/api/quests/${questId}/join`),
+  updateQuest: (formData) => api.put(`/api/quests/${formData.id}`, formData),
+  leaveQuest: (questId) => api.post(`/api/quests/${questId}/leave`),
+  deleteQuest: (questId) => api.delete(`/api/quests/${questId}`),
+};
+export const learderBoardService = {
+  getAll: () => api.get("/api/leaderboard"),
+  // create: (questData) => api.post("/api/quests", questData),
+  // joinQuest: (questId) => api.post(`/api/quests/${questId}/join`),
+  // updateQuest: (formData) => api.put(`/api/quests/${formData.id}`, formData),
+  // leaveQuest: (questId) => api.post(`/api/quests/${questId}/leave`),
+  // deleteQuest: (questId) => api.delete(`/api/quests/${questId}`),
 };
 
-const submitForm = async () => {
-  try {
-    // Ensure you're passing a plain object
-    const response = await questService.create(toRaw(formData)); // Pass formData as a plain object
-    console.log("Response:", response);
-  } catch (error) {
-    console.error("Error during form submission:", error);
-  }
-};
 
 // Error handling
 api.interceptors.response.use(

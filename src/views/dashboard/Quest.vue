@@ -3,6 +3,8 @@ import { ref, computed, onMounted } from 'vue';
 import ModalComponent from '@/components/ModalComponent.vue';
 import { questService } from '@/services/api';
 import dayjs from "dayjs";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 import PrimaryButton from '@/components/PrimaryButton.vue';
 
 const showModal = ref(false);
@@ -11,73 +13,95 @@ const error = ref(null);
 const loading = ref(false);
 
 const formData = ref({
-    Name: '',
-    TargetAmout: '',
-    Description: '',
-    TotalMilstones: '',
-    PointsPerMilstone: '',
-    GtCoin: '',
-    StartDate: '',
-    EndDate: '',
+    name: '',
+    targetAmount: '',
+    description: '',
+    totalMilestones: '',
+    pointsPerMilestone: '',
+    gtCoin: '',
+    startDate: '',
+    endDate: '',
 });
+
+const openModal = () => {
+    showModal.value = true;
+    formData.value = {}
+}
+const tostifyMessage = (message) => {
+    toast(message, {
+        autoClose: 1000,
+    });
+}
 
 const handleShowModalUpdate = (value) => {
     showModal.value = value;
 };
 
-const onToggle = () => {
-    showModal.value = false;
-};
-
-const fetchQuests = async () => {
-    loading.value = true;
-    error.value = null;
+const fetchAndFormatQuests = async () => {
     try {
         const response = await questService.getAll();
-        if (response && response.data) {
-            allQuest.value = response.data.map((quest) => ({
-                ...quest,
-                formattedStartDate: dayjs(quest.startDate).format("MMMM D, YYYY h:mm A"),
-                formattedEndDate: dayjs(quest.endDate).format("MMMM D, YYYY h:mm A"),
-            }));
-        }
-    } catch (err) {
-        console.error('Error fetching quests:', err);
-        error.value = 'Failed to load quests. Please try again later.';
-    } finally {
-        loading.value = false;
+        allQuest.value = response.data.map((quest) => ({
+            ...quest,
+            formattedStartDate: dayjs(quest.startDate).format("MMMM D, YYYY h:mm A"),
+            formattedEndDate: dayjs(quest.endDate).format("MMMM D, YYYY h:mm A"),
+        }));
+    } catch (error) {
+        console.error("Failed to fetch quests:", error);
     }
 };
 
+
 onMounted(() => {
-    fetchQuests();
+    fetchAndFormatQuests();
+
 });
 
 const submitForm = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-        await questService.create(formData.value);
-        await fetchQuests(); // Refresh the list after creating
-        showModal.value = false;
-        // Reset form
-        formData.value = {
-            Name: '',
-            TargetAmout: '',
-            Description: '',
-            TotalMilstones: '',
-            PointsPerMilstone: '',
-            GtCoin: '',
-            StartDate: '',
-            EndDate: '',
-        };
-    } catch (err) {
-        console.error('Error submitting form:', err);
-        error.value = 'Failed to create quest. Please try again.';
-    } finally {
-        loading.value = false;
-    }
+    let response = await questService.create(formData.value);
+    fetchAndFormatQuests();
+    tostifyMessage('Quest Created Successfully');
+    showModal.value = false
 };
+
+const joinQuest = async (id) => {
+    let response = await questService.joinQuest(id);
+    tostifyMessage(response.data.message);
+}
+const updateQuest = async () => {
+    try {
+        const response = await questService.updateQuest(formData.value);
+        fetchAndFormatQuests();
+        formData.value = {};
+        showModal.value = false
+        console.log("Quest updated successfully:", response);
+        tostifyMessage('Updated Successfully'); 
+    } catch (error) {
+        console.error("Error updating quest:", error);
+    }
+}
+
+const getQuest = async (id) => {
+    const questToUpdate = allQuest.value.find((quest) => quest.id === id);
+    showModal.value = true;
+    if (!questToUpdate) {
+        console.error(`Quest with ID ${id} not found`);
+        return;
+    }
+    formData.value = questToUpdate
+};
+
+const leaveQuest = async (id) => {
+    let response = await questService.leaveQuest(id);
+    fetchAndFormatQuests();
+    tostifyMessage(response.data.message);
+}
+const deleteQuest = async (id) => {
+    let response = await questService.deleteQuest(id);
+    fetchAndFormatQuests();
+    tostifyMessage('Deleted Successfully');
+}
+
+
 </script>
 
 <template>
@@ -85,9 +109,10 @@ const submitForm = async () => {
         <div class="flex justify-between items-center">
             <h3 class="text-xl font-semibold text-gray-800">All Quest</h3>
             <div>
-                <PrimaryButton @click="showModal = true">
-                    Create Quest
-                </PrimaryButton>
+                <button type="button" @click="openModal"
+                    class="focus:outline-none flex items-center space-x-2 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                    <i class='bx bx-plus'></i> <span>Creat Quest</span>
+                </button>
             </div>
         </div>
 
@@ -124,13 +149,15 @@ const submitForm = async () => {
                                         src="https://penguinui.s3.amazonaws.com/component-assets/avatar-1.webp"
                                         alt="user avatar" />
                                     <div class="flex flex-col">
-                                        <span class="text-neutral-900 capitalize font-bold">{{ quest.name }}</span>
+                                        <router-link :to="'/dashboard/quest/' + quest.id"
+                                            class="text-neutral-900 capitalize font-bold">{{ quest.name }}</router-link>
                                         <span>
                                             <span class="text-sm text-neutral-600 opacity-85">{{
                                                 quest.formattedStartDate
-                                            }}</span> -
-                                            <span class="text-sm text-neutral-600 opacity-85">{{ quest.formattedEndDate
-                                            }}</span>
+                                                }}</span> -
+                                            <br>
+                                            <span class="text-sm text-neutral-600 opacity-85 ">{{ quest.formattedEndDate
+                                                }}</span>
                                         </span>
                                     </div>
                                 </div>
@@ -142,8 +169,23 @@ const submitForm = async () => {
                                 <span v-else
                                     class="inline-flex overflow-hidden rounded-md border border-red-500 px-1 py-0.5 text-xs font-medium text-red-500 bg-red-500/10">Pending</span>
                             </td>
-                            <td class="p-4"><button type="button"
-                                    class="cursor-pointer whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Join</button>
+                            <td class="p-4  space-x-2">
+                                <button v-if="quest.isActive" type="button" @click="joinQuest(quest.id)"
+                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
+                                    <i class='bx bx-plus-circle'></i> <span>Join</span>
+                                </button>
+                                <button type="button" @click="deleteQuest(quest.id)"
+                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
+                                    <span>Delete</span>
+                                </button>
+                                <button type="button" @click="getQuest(quest.id)"
+                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
+                                    <span>Update</span>
+                                </button>
+                                <button v-if="quest.isActive" type="button" @click="leaveQuest(quest.id)"
+                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
+                                    <span>Leave</span>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -151,69 +193,66 @@ const submitForm = async () => {
             </div>
         </section>
 
-        <ModalComponent 
-            v-model:showModal="showModal" 
-            :title="'Create Quest'"
-            @update:showModal="handleShowModalUpdate"
-        >
-            <div class="max-w-2xl mx-auto p-4">
-                <form class="grid md:grid-cols-2 gap-3" @submit.prevent="submitForm">
+
+        <ModalComponent :showModal="showModal" @update:showModal="handleShowModalUpdate" :title="'create Quest'">
+            <div class="max-w-2xl mx-auto p-4" @submit.prevent="formData.id ? updateQuest() : submitForm()">
+                <form class="grid md:grid-cols-2 gap-3">
                     <div class="">
                         <label for="title" class="block text-xs font-semibold text-gray-800 mb-1">Name <span
                                 class="text-red-600 text-sm">*</span></label>
-                        <input type="text" id="name" v-model="formData.Name"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <input type="text" id="name" v-model="formData.name"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             required placeholder="name">
                     </div>
                     <div class="">
-                        <label for="targetamout" class="block text-xs font-semibold text-gray-800 mb-1">Target
+                        <label for="targetAmount" class="block text-xs font-semibold text-gray-800 mb-1">Target
                             Amout <span class="text-red-600 text-sm">*</span></label>
-                        <input type="number" id="targetamout" v-model="formData.TargetAmout"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <input type="number" id="targetAmount" v-model="formData.targetAmount"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             required placeholder="1000">
                     </div>
 
                     <div class="md:col-span-2">
                         <label for="Description" class="block text-xs font-semibold text-gray-800 mb-1">Description
                             <span class="text-red-600 text-sm">*</span></label>
-                        <textarea id="Description" v-model="formData.Description"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <textarea id="Description" v-model="formData.description"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             rows="4" required></textarea>
                     </div>
                     <div class="">
-                        <label for="TotalMilstones" class="block text-xs font-semibold text-gray-800 mb-1">Total
+                        <label for="totalMilestones" class="block text-xs font-semibold text-gray-800 mb-1">Total
                             Milstones <span class="text-red-600 text-sm">*</span></label>
-                        <input type="number" id="TotalMilstones" v-model="formData.TotalMilstones"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <input type="number" id="totalMilestones" v-model="formData.totalMilestones"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             required placeholder="1000">
                     </div>
                     <div class="">
-                        <label for="PointsPerMilstone" class="block text-xs font-semibold text-gray-800 mb-1">Points
+                        <label for="pointsPerMilestone" class="block text-xs font-semibold text-gray-800 mb-1">Points
                             Per Milstone <span class="text-red-600 text-sm">*</span></label>
-                        <input type="number" id="PointsPerMilstone" v-model="formData.PointsPerMilstone"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <input type="number" id="pointsPerMilestone" v-model="formData.pointsPerMilestone"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             required placeholder="1000">
                     </div>
 
                     <div class="">
-                        <label for="GtCoin" class="block text-xs font-semibold text-gray-800 mb-1">Gtcoin</label>
-                        <input type="text" id="GtCoin" v-model="formData.GtCoin"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <label for="gtCoin" class="block text-xs font-semibold text-gray-800 mb-1">gtcoin</label>
+                        <input type="number" id="gtCoin" v-model="formData.gtCoin"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             placeholder="1000">
                     </div>
 
                     <div class="">
-                        <label for="StartDate" class="block text-xs font-semibold text-gray-800 mb-1">Start Date <span
+                        <label for="startDate" class="block text-xs font-semibold text-gray-800 mb-1">Start Date <span
                                 class="text-red-600 text-sm">*</span></label>
-                        <input type="date" id="StartDate" v-model="formData.StartDate"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <input type="date" id="startDate" v-model="formData.startDate"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             required placeholder="1000">
                     </div>
                     <div class="">
-                        <label for="EndDate" class="block text-xs font-semibold text-gray-800 mb-1">End Date <span
+                        <label for="endDate" class="block text-xs font-semibold text-gray-800 mb-1">End Date <span
                                 class="text-red-600 text-sm">*</span></label>
-                        <input type="date" id="EndDate" v-model="formData.EndDate"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500 focus:ring-0"
+                        <input type="date" id="endDate" v-model="formData.endDate"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             required placeholder="1000">
                     </div>
 
