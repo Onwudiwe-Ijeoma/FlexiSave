@@ -8,6 +8,7 @@ import 'vue3-toastify/dist/index.css';
 import PrimaryButton from '@/components/PrimaryButton.vue';
 
 const showModal = ref(false);
+const isMenuOpen = ref(0);
 const allQuest = ref([]);
 const error = ref(null);
 const loading = ref(false);
@@ -27,6 +28,12 @@ const openModal = () => {
     showModal.value = true;
     formData.value = {}
 }
+const openMenu = (id) => {
+    isMenuOpen.value == id ? isMenuOpen.value  = 0 : isMenuOpen.value = id
+    console.log(isMenuOpen.value);
+    
+    
+}
 const tostifyMessage = (message) => {
     toast(message, {
         autoClose: 1000,
@@ -42,8 +49,8 @@ const fetchAndFormatQuests = async () => {
         const response = await questService.getAll();
         allQuest.value = response.data.map((quest) => ({
             ...quest,
-            formattedStartDate: dayjs(quest.startDate).format("MMMM D, YYYY h:mm A"),
-            formattedEndDate: dayjs(quest.endDate).format("MMMM D, YYYY h:mm A"),
+            formattedStartDate: dayjs(quest.startDate).format("MMM D, YYYY h:mm A"),
+            formattedEndDate: dayjs(quest.endDate).format("MMM D, YYYY h:mm A"),
         }));
     } catch (error) {
         console.error("Failed to fetch quests:", error);
@@ -74,7 +81,7 @@ const updateQuest = async () => {
         formData.value = {};
         showModal.value = false
         console.log("Quest updated successfully:", response);
-        tostifyMessage('Updated Successfully'); 
+        tostifyMessage('Updated Successfully');
     } catch (error) {
         console.error("Error updating quest:", error);
     }
@@ -105,19 +112,20 @@ const deleteQuest = async (id) => {
 </script>
 
 <template>
-    <main>
+    <main class="font-['Poppins']">
         <div class="flex justify-between items-center">
-            <h3 class="text-xl font-semibold text-gray-800">All Quest</h3>
+            <h3 class="text-xl font-semibold text-gray-800">All Quests</h3>
             <div>
                 <button type="button" @click="openModal"
-                    class="focus:outline-none flex items-center space-x-2 text-white bg-orange-600 hover:bg-orange-700 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ">
+                    class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 ">
                     <i class='bx bx-plus'></i> <span>Create Quest</span>
                 </button>
             </div>
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+        <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+            role="alert">
             <span class="block sm:inline">{{ error }}</span>
         </div>
 
@@ -139,18 +147,18 @@ const deleteQuest = async (id) => {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-300">
-                        <tr v-for="quest in allQuest">
+                        <tr v-for=" quest, key in allQuest" class="hover:bg-gray-100">
                             <td class="p-4">
-                                #{{ quest.id }}
+                                #{{ key + 1 }}
                             </td>
-                            <td class="p-4">
-                                <div class="flex w-max items-center gap-2">
+                            <td class="">
+                                <router-link :to="'/dashboard/quest/' + quest.id"
+                                    class="flex w-max items-center gap-2 p-4 hover:bg-gray-200 ">
                                     <img class="size-10 rounded-full object-cover"
                                         src="https://penguinui.s3.amazonaws.com/component-assets/avatar-1.webp"
                                         alt="user avatar" />
                                     <div class="flex flex-col">
-                                        <router-link :to="'/dashboard/quest/' + quest.id"
-                                            class="text-neutral-900 capitalize font-bold">{{ quest.name }}</router-link>
+                                        <span class="text-neutral-900 capitalize font-bold">{{ quest.name }}</span>
                                         <span>
                                             <span class="text-sm text-neutral-600 opacity-85">{{
                                                 quest.formattedStartDate
@@ -160,7 +168,7 @@ const deleteQuest = async (id) => {
                                                 }}</span>
                                         </span>
                                     </div>
-                                </div>
+                                </router-link>
                             </td>
                             <td class="p-4">{{ quest.targetAmount }}</td>
                             <td class="p-4">
@@ -169,23 +177,29 @@ const deleteQuest = async (id) => {
                                 <span v-else
                                     class="inline-flex overflow-hidden rounded-md border border-red-500 px-1 py-0.5 text-xs font-medium text-red-500 bg-red-500/10">Pending</span>
                             </td>
-                            <td class="p-4  space-x-2">
-                                <button v-if="quest.isActive" type="button" @click="joinQuest(quest.id)"
-                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
-                                    <i class='bx bx-plus-circle'></i> <span>Join</span>
-                                </button>
-                                <button type="button" @click="deleteQuest(quest.id)"
-                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
-                                    <span>Delete</span>
-                                </button>
-                                <button type="button" @click="getQuest(quest.id)"
-                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
-                                    <span>Update</span>
-                                </button>
-                                <button v-if="quest.isActive" type="button" @click="leaveQuest(quest.id)"
-                                    class="cursor-pointer flex items-center space-x-1 whitespace-nowrap rounded-md bg-transparent p-0.5 font-semibold text-black outline-black hover:text-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 ">
-                                    <span>Leave</span>
-                                </button>
+                            <td class="p-4 space-x-2">
+                                <div class="absolute ">
+                                    <button type="button" class=""  @click="openMenu(quest.id)">
+                                        <i class='bx bx-dots-vertical-rounded font-bold text-xl hover:text-gray-800'></i>
+                                    </button>
+                                    <!-- Dropdown Menu -->
+                                    <div v-show="isMenuOpen == quest.id" class="absolute top-7 md:-right-10 flex w-full min-w-[8rem] flex-col overflow-hidden rounded-md border border-neutral-300 bg-neutral-50 shadow z-50"
+                                        role="menu">
+                                        <button v-if="quest.isActive" type="button" @click="joinQuest(quest.id), openMenu(quest.id)"
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            role="menuitem"><i class='bx bx-plus-circle'></i> <span>Join</span></button>
+                                        <button type="button" @click="deleteQuest(quest.id), openMenu(quest.id)"
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            role="menuitem"><span>Delete</span></button>
+                                        <button type="button" @click="getQuest(quest.id), openMenu(quest.id)"
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            role="menuitem"><span>Update</span></button>
+                                        <button v-if="quest.isActive" type="button" @click="leaveQuest(quest.id), openMenu(quest.id)"
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            role="menuitem"><span>Leave</span></button>
+
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -257,18 +271,11 @@ const deleteQuest = async (id) => {
                     </div>
 
                     <div class="p-3 mt-2 text-center space-x-4 md:block md:col-span-2">
-                        <PrimaryButton
-                            type="submit"
-                            :disabled="loading"
-                        >
+                        <PrimaryButton type="submit" :disabled="loading">
                             {{ loading ? 'Saving...' : 'Save' }}
                         </PrimaryButton>
-                        <button 
-                            type="button"
-                            @click="onToggle"
-                            :disabled="loading"
-                            class="mb-2 md:mb-0 bg-white border border-[#DD4F05] px-4 py-2 text-sm shadow-sm font-medium tracking-wider text-[#DD4F05] rounded-lg hover:bg-[#DD4F05]/10 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#DD4F05]/50"
-                        >
+                        <button type="button" @click="onToggle" :disabled="loading"
+                            class="mb-2 md:mb-0 bg-white border border-[#DD4F05] px-4 py-2 text-sm shadow-sm font-medium tracking-wider text-[#DD4F05] rounded-lg hover:bg-[#DD4F05]/10 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#DD4F05]/50">
                             Close
                         </button>
                     </div>
