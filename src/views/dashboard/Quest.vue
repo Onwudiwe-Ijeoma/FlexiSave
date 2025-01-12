@@ -110,8 +110,8 @@ const deleteQuest = async (id) => {
             <h3 class="text-xl font-semibold text-gray-800">All Quest</h3>
             <div>
                 <button type="button" @click="openModal"
-                    class="focus:outline-none flex items-center space-x-2 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                    <i class='bx bx-plus'></i> <span>Creat Quest</span>
+                    class="focus:outline-none flex items-center space-x-2 text-white bg-orange-600 hover:bg-orange-700 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 ">
+                    <i class='bx bx-plus'></i> <span>Create Quest</span>
                 </button>
             </div>
         </div>
