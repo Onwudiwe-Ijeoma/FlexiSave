@@ -19,6 +19,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add request interceptor for debugging
+api.interceptors.request.use((config) => {
+  console.log('API Request:', {
+    url: config.url,
+    method: config.method,
+    data: config.data,
+    headers: config.headers
+  });
+  return config;
+});
+
 export const authService = {
   login: (credentials) =>
     api.post(API_ENDPOINTS.AUTH.LOGIN, credentials, {
@@ -40,11 +51,26 @@ export const transactionService = {
   // Add other transaction-related endpoints
 };
 
-
 export const questService = {
-  getAll: () => api.get("/api/quests"),
+  getAll: async () => {
+    try {
+      const response = await api.get(API_ENDPOINTS.QUEST.GET_ALL);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
   getOne: (questId) => api.get(`/api/quests/${questId}`),
-  create: (questData) => api.post("/api/quests", questData),
+  create: async (questData) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.QUEST.CREATE, questData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
   joinQuest: (questId) => api.post(`/api/quests/${questId}/join`),
   updateQuest: (formData) => api.put(`/api/quests/${formData.id}`, formData),
   leaveQuest: (questId) => api.post(`/api/quests/${questId}/leave`),

@@ -1,14 +1,10 @@
 export const API_ENDPOINTS = {
     AUTH: {
         LOGIN: 'login',
-        REGISTER: '/auth/register',
+        REGISTER: '/auth/register'
     },
-    USER: {
-        PROFILE: '/user/profile',
-    },
-    TRANSACTIONS: {
-        LIST: '/transactions',
-        CREATE: '/transactions',
-        DELETE: (id) => `/transactions/${id}`,
-    },
+    QUEST: {
+        GET_ALL: '/api/quests',
+        CREATE: '/api/quests'
+    }
 }; 
