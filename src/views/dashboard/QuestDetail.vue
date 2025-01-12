@@ -128,7 +128,7 @@ const leaveQuest = async (id) => {
                     </div>
                     <div
                         class="flex flex-col text-left bg-[#e65100] text-white text-xs self-center pl-16 pr-4 py-2 -ml-12 w-full">
-                        <h3 class="text-lg">{{ quest.name }}</h3>
+                        <h3 class="text-lg  uppercase">{{ quest.name }}</h3>
                         <p class="w-64 text-xs overflow-y-hidden overflow-x-auto">{{ quest.description }}</p>
                     </div>
                 </div>
@@ -266,4 +266,8 @@ const leaveQuest = async (id) => {
 </template>
 
 
-<style lang="scss" scoped></style>
+<style >
+:root {
+    --toastify-color-progress-light: orange;
+}
+</style>

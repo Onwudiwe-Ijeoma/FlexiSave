@@ -162,7 +162,7 @@ const deleteQuest = async (id) => {
                                         <span>
                                             <span class="text-sm text-neutral-600 opacity-85">{{
                                                 quest.formattedStartDate
-                                            }}</span> -
+                                                }}</span> -
                                             <br>
                                             <span class="text-sm text-neutral-600 opacity-85 ">{{ quest.formattedEndDate
                                                 }}</span>
@@ -283,7 +283,7 @@ const deleteQuest = async (id) => {
                         <PrimaryButton type="submit" :disabled="loading">
                             {{ loading ? 'Saving...' : 'Save' }}
                         </PrimaryButton>
-                        <button type="button"@click="toggleModal" :disabled="loading"
+                        <button type="button" @click="toggleModal" :disabled="loading"
                             class="mb-2 md:mb-0 bg-white border border-[#DD4F05] px-4 py-2 text-sm shadow-sm font-medium tracking-wider text-[#DD4F05] rounded-lg hover:bg-[#DD4F05]/10 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#DD4F05]/50">
                             Close
                         </button>
@@ -307,5 +307,9 @@ const deleteQuest = async (id) => {
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 500ms ease-out;
+}
+
+:root {
+    --toastify-color-progress-light: orange;
 }
 </style>
