@@ -19,6 +19,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add request interceptor for debugging
+api.interceptors.request.use((config) => {
+  console.log('API Request:', {
+    url: config.url,
+    method: config.method,
+    data: config.data,
+    headers: config.headers
+  });
+  return config;
+});
+
 export const authService = {
   login: (credentials) =>
     api.post(API_ENDPOINTS.AUTH.LOGIN, credentials, {
@@ -40,10 +51,25 @@ export const transactionService = {
   // Add other transaction-related endpoints
 };
 
-
 export const questService = {
-  getAll: () => api.get("/api/quests"),
-  create: (questData) => api.post("/api/quests", questData),
+  getAll: async () => {
+    try {
+      const response = await api.get(API_ENDPOINTS.QUEST.GET_ALL);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  create: async (questData) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.QUEST.CREATE, questData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
 };
 
 const submitForm = async () => {

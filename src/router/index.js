@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: '/dashboard',
       component: DashBoardView,
-      meta: { requiresAuth: true },
+      // meta: { requiresAuth: true },
       children: [
         {
           path: 'overview',
