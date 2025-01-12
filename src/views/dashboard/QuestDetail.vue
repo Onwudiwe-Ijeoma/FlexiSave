@@ -14,6 +14,7 @@ const route = useRoute();
 const quest = ref([]);
 const leaderBoard = ref([]);
 const showModal = ref(false);
+const loading = ref(false);
 
 const formData = ref({
     amount: '',
@@ -41,8 +42,7 @@ const openModal = () => {
 
 const submitForm = async () => {
     let response = await questService.contributeToQuest(route.params.id, formData.value);
-    fetchAndFormatQuests();
-    tostifyMessage('Quest Created Successfully');
+    tostifyMessage(`${formData.value.amount} Contributed Successfully`);
     showModal.value = false
 };
 
@@ -241,8 +241,8 @@ const leaveQuest = async (id) => {
 
 
         <ModalComponent :showModal="showModal" @update:showModal="handleShowModalUpdate" :title="'create Quest'">
-            <div class="max-w-2xl mx-auto p-4" @submit.prevent="submitForm">
-                <form class="grid md:grid-cols-2 gap-3">
+            <div class=" overflow-auto h-[40%]max-w-2xl mx-auto p-4" @submit.prevent="submitForm">
+                <form class=" gap-3">
                     <div class="">
                         <label for="title" class="block text-xs font-semibold text-gray-800 mb-1">Amount <span
                                 class="text-red-600 text-sm">*</span></label>
@@ -252,7 +252,7 @@ const leaveQuest = async (id) => {
                     </div>
                     <div class="p-3 mt-2 text-center space-x-4 md:block md:col-span-2">
                         <PrimaryButton type="submit" :disabled="loading">
-                            {{ loading ? 'Saving...' : 'Save' }}
+                            {{ loading ? 'Saving...' : 'Contribute' }}
                         </PrimaryButton>
                         <button type="button" @click="onToggle" :disabled="loading"
                             class="mb-2 md:mb-0 bg-white border border-[#DD4F05] px-4 py-2 text-sm shadow-sm font-medium tracking-wider text-[#DD4F05] rounded-lg hover:bg-[#DD4F05]/10 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#DD4F05]/50">

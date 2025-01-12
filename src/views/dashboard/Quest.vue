@@ -209,7 +209,7 @@ const deleteQuest = async (id) => {
 
 
         <ModalComponent :showModal="showModal" @update:showModal="handleShowModalUpdate" :title="'create Quest'">
-            <div class="max-w-2xl mx-auto p-4" @submit.prevent="formData.id ? updateQuest() : submitForm()">
+            <div class="overflow-auto h-[90%] max-w-2xl mx-auto p-4" @submit.prevent="formData.id ? updateQuest() : submitForm()">
                 <form class="grid md:grid-cols-2 gap-3">
                     <div class="">
                         <label for="title" class="block text-xs font-semibold text-gray-800 mb-1">Name <span
