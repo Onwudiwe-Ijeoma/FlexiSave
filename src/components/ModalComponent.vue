@@ -34,7 +34,7 @@ const onToggle = () => {
       <div v-if="showModal" class="h-screen w-screen fixed left-0 top-0 z-20">
         <div @click="onToggle" class="absolute bg-black opacity-70 inset-0 z-0"></div>
         <div
-          class="w-full max-w-2xl p-3 relative mx-auto my-auto rounded-xl shadow-lg bg-white mt-10 h-[80%] overflow-auto z-50">
+          class="w-full max-w-2xl p-3 relative mx-auto my-auto rounded-xl shadow-lg bg-white mt-10 overflow-auto z-50">
           <div class="flex justify-between p-2 text-gray-800">
             <h2 class="text-xl capitalize font-bold">{{ title }}</h2>
             <button @click="onToggle" class="font-semibold">X</button>

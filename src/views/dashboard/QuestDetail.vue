@@ -241,7 +241,7 @@ const leaveQuest = async (id) => {
 
 
         <ModalComponent :showModal="showModal" @update:showModal="handleShowModalUpdate" :title="'create Quest'">
-            <div class=" overflow-auto h-[40%]max-w-2xl mx-auto p-4" @submit.prevent="submitForm">
+            <div class=" overflow-auto h-[200px] max-w-2xl mx-auto p-4" @submit.prevent="submitForm">
                 <form class=" gap-3">
                     <div class="">
                         <label for="title" class="block text-xs font-semibold text-gray-800 mb-1">Amount <span
