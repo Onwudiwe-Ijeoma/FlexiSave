@@ -138,7 +138,7 @@ const deleteQuest = async (id) => {
             <div class="overflow-hidden w-full overflow-x-auto rounded-md border border-neutral-300">
                 <table class="w-full text-left text-sm text-neutral-600">
                     <thead class="border-b border-neutral-300 bg-neutral-50 text-sm text-neutral-900">
-                        <tr>
+                        <tr class="bg-orange-500 text-white">
                             <th scope="col" class="p-4">S/N</th>
                             <th scope="col" class="p-4">Quest</th>
                             <th scope="col" class="p-4">Target Amount</th>
@@ -147,13 +147,13 @@ const deleteQuest = async (id) => {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-300">
-                        <tr v-for=" quest, key in allQuest" class="hover:bg-gray-100">
+                        <tr v-for=" quest, key in allQuest" class="hover:bg-orange-100">
                             <td class="p-4">
                                 #{{ key + 1 }}
                             </td>
                             <td class="">
                                 <router-link :to="'/dashboard/quest/' + quest.id"
-                                    class="flex w-max items-center gap-2 p-4 hover:bg-gray-200 ">
+                                    class="flex w-max items-center gap-2 p-4 hover:bg-orange-200 ">
                                     <img class="size-10 rounded-full object-cover"
                                         src="https://penguinui.s3.amazonaws.com/component-assets/avatar-1.webp"
                                         alt="user avatar" />
@@ -189,18 +189,18 @@ const deleteQuest = async (id) => {
                                         role="menu">
                                         <button v-if="quest.isActive" type="button"
                                             @click="joinQuest(quest.id), openMenu(quest.id)"
-                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
                                             role="menuitem"><i class='bx bx-plus-circle'></i> <span>Join</span></button>
                                         <button type="button" @click="deleteQuest(quest.id), openMenu(quest.id)"
-                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
-                                            role="menuitem"><span>Delete</span></button>
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            role="menuitem"><i class='bx bx-trash' ></i><span>Delete</span></button>
                                         <button type="button" @click="getQuest(quest.id), openMenu(quest.id)"
-                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
-                                            role="menuitem"><span>Update</span></button>
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            role="menuitem"><i class='bx bx-edit-alt' ></i><span>Update</span></button>
                                         <button v-if="quest.isActive" type="button"
                                             @click="leaveQuest(quest.id), openMenu(quest.id)"
-                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
-                                            role="menuitem"><span>Leave</span></button>
+                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                            role="menuitem"><i class='bx bx-log-out-circle' ></i><span>Leave</span></button>
 
                                     </div>
                                 </div>

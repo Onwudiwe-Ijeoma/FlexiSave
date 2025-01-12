@@ -100,18 +100,17 @@ const leaveQuest = async (id) => {
                 <span v-else
                     class="inline-flex overflow-hidden rounded-md border border-red-500 px-1 py-0.5 text-xs font-medium text-red-500 bg-red-500/10">Pending</span>
             </h3>
-            <div class="flex items-center space-x-2">
-
+            <div class="flex items-center">
                 <button type="button" @click="toggleModal"
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-plus'></i> <span>Contribute</span>
                 </button>
                 <button type="button" @click="joinQuest(quest.id)"
-                    class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75">
+                    class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-plus'></i> <span>Join Quest</span>
                 </button>
                 <button type="button" @click="leaveQuest(quest.id)"
-                    class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75">
+                    class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-log-out-circle'></i><span>Leave Quest</span>
                 </button>
             </div>
@@ -123,11 +122,11 @@ const leaveQuest = async (id) => {
             <div class="flex flex-row flex-wrap justify-start">
                 <div class="flex justify-start text-center m-2 h-24 w-full">
                     <div
-                        class="flex-shrink-0 rounded-full bg-gray-100 w-24 h-24 border border-[#e65100] z-10 flex justify-center items-center">
-                        <i class='bx bxs-quote-left text-6xl p-2 w-24 h-24 text-[#e65100] opacity-60'></i>
+                        class="flex-shrink-0 rounded-full bg-gray-100 w-24 h-24 border border-orange-500 z-10 flex justify-center items-center">
+                        <i class='bx bxs-quote-left text-6xl p-2 w-24 h-24 text-orange-500 opacity-60'></i>
                     </div>
                     <div
-                        class="flex flex-col text-left bg-[#e65100] text-white text-xs self-center pl-16 pr-4 py-2 -ml-12 w-full">
+                        class="flex flex-col text-left bg-orange-500 text-white text-xs self-center pl-16 pr-4 py-2 -ml-12 w-full">
                         <h3 class="text-lg  uppercase">{{ quest.name }}</h3>
                         <p class="w-64 text-xs overflow-y-hidden overflow-x-auto">{{ quest.description }}</p>
                     </div>
@@ -213,16 +212,16 @@ const leaveQuest = async (id) => {
 
 
         <section class="my-10">
-            <h3 class="text-xl font-bold  my-4 text-gray-800">LeaderBoard</h3>
+            <h3 class="text-xl font-bold  my-4 text-orange-500">LeaderBoard</h3>
             <div class="overflow-hidden w-full overflow-x-auto rounded-md border border-neutral-300">
                 <table class="w-full text-left text-sm text-neutral-600 ">
                     <thead class="border-b border-neutral-300 bg-neutral-50 text-sm text-neutral-900 ">
-                        <tr>
-                            <th scope="col" class="p-4 text-[#e65100] bg-[#e65100] bg-opacity-10">S/N</th>
+                        <tr class="bg-orange-500 text-white">
+                            <th scope="col" class="p-4">S/N</th>
                             <th scope="col" class="p-4">Name</th>
-                            <th scope="col" class="p-4 text-[#e65100] bg-[#e65100] bg-opacity-10">Rank</th>
+                            <th scope="col" class="p-4">Rank</th>
                             <th scope="col" class="p-4">Total Points</th>
-                            <th scope="col" class="p-4 text-[#e65100] bg-[#e65100] bg-opacity-10">GtCoin</th>
+                            <th scope="col" class="p-4">GtCoin</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-300 ">
