@@ -36,8 +36,8 @@ onMounted(async () => {
     getOneQuest();
 });
 
-const openModal = () => {
-    showModal.value = true;
+const toggleModal = () => {
+    showModal.value = !showModal.value;
 }
 
 const submitForm = async () => {
@@ -102,7 +102,7 @@ const leaveQuest = async (id) => {
             </h3>
             <div class="flex items-center space-x-2">
 
-                <button type="button" @click="openModal"
+                <button type="button" @click="toggleModal"
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-plus'></i> <span>Contribute</span>
                 </button>
@@ -254,7 +254,7 @@ const leaveQuest = async (id) => {
                         <PrimaryButton type="submit" :disabled="loading">
                             {{ loading ? 'Saving...' : 'Contribute' }}
                         </PrimaryButton>
-                        <button type="button" @click="onToggle" :disabled="loading"
+                        <button type="button" @click="toggleModal" :disabled="loading"
                             class="mb-2 md:mb-0 bg-white border border-[#DD4F05] px-4 py-2 text-sm shadow-sm font-medium tracking-wider text-[#DD4F05] rounded-lg hover:bg-[#DD4F05]/10 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#DD4F05]/50">
                             Close
                         </button>

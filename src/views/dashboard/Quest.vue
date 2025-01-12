@@ -24,15 +24,15 @@ const formData = ref({
     endDate: '',
 });
 
-const openModal = () => {
-    showModal.value = true;
+const toggleModal = () => {
+    showModal.value = !showModal.value;
     formData.value = {}
 }
 const openMenu = (id) => {
-    isMenuOpen.value == id ? isMenuOpen.value  = 0 : isMenuOpen.value = id
+    isMenuOpen.value == id ? isMenuOpen.value = 0 : isMenuOpen.value = id
     console.log(isMenuOpen.value);
-    
-    
+
+
 }
 const tostifyMessage = (message) => {
     toast(message, {
@@ -116,7 +116,7 @@ const deleteQuest = async (id) => {
         <div class="flex justify-between items-center">
             <h3 class="text-xl font-semibold text-gray-800">All Quests</h3>
             <div>
-                <button type="button" @click="openModal"
+                <button type="button" @click="toggleModal"
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 ">
                     <i class='bx bx-plus'></i> <span>Create Quest</span>
                 </button>
@@ -162,7 +162,7 @@ const deleteQuest = async (id) => {
                                         <span>
                                             <span class="text-sm text-neutral-600 opacity-85">{{
                                                 quest.formattedStartDate
-                                                }}</span> -
+                                            }}</span> -
                                             <br>
                                             <span class="text-sm text-neutral-600 opacity-85 ">{{ quest.formattedEndDate
                                                 }}</span>
@@ -179,13 +179,16 @@ const deleteQuest = async (id) => {
                             </td>
                             <td class="p-4 space-x-2">
                                 <div class="absolute ">
-                                    <button type="button" class=""  @click="openMenu(quest.id)">
-                                        <i class='bx bx-dots-vertical-rounded font-bold text-xl hover:text-gray-800'></i>
+                                    <button type="button" class="" @click="openMenu(quest.id)">
+                                        <i
+                                            class='bx bx-dots-vertical-rounded font-bold text-xl hover:text-gray-800'></i>
                                     </button>
                                     <!-- Dropdown Menu -->
-                                    <div v-show="isMenuOpen == quest.id" class="absolute top-7 md:-right-10 flex w-full min-w-[8rem] flex-col overflow-hidden rounded-md border border-neutral-300 bg-neutral-50 shadow z-50"
+                                    <div v-show="isMenuOpen == quest.id"
+                                        class="absolute top-7 md:-right-10 flex w-full min-w-[8rem] flex-col overflow-hidden rounded-md border border-neutral-300 bg-neutral-50 shadow z-50"
                                         role="menu">
-                                        <button v-if="quest.isActive" type="button" @click="joinQuest(quest.id), openMenu(quest.id)"
+                                        <button v-if="quest.isActive" type="button"
+                                            @click="joinQuest(quest.id), openMenu(quest.id)"
                                             class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
                                             role="menuitem"><i class='bx bx-plus-circle'></i> <span>Join</span></button>
                                         <button type="button" @click="deleteQuest(quest.id), openMenu(quest.id)"
@@ -194,7 +197,8 @@ const deleteQuest = async (id) => {
                                         <button type="button" @click="getQuest(quest.id), openMenu(quest.id)"
                                             class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
                                             role="menuitem"><span>Update</span></button>
-                                        <button v-if="quest.isActive" type="button" @click="leaveQuest(quest.id), openMenu(quest.id)"
+                                        <button v-if="quest.isActive" type="button"
+                                            @click="leaveQuest(quest.id), openMenu(quest.id)"
                                             class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-neutral-900/5 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
                                             role="menuitem"><span>Leave</span></button>
 
@@ -209,7 +213,8 @@ const deleteQuest = async (id) => {
 
 
         <ModalComponent :showModal="showModal" @update:showModal="handleShowModalUpdate" :title="'create Quest'">
-            <div class="overflow-auto h-[500px] max-w-2xl mx-auto p-4" @submit.prevent="formData.id ? updateQuest() : submitForm()">
+            <div class="overflow-auto h-[500px] max-w-2xl mx-auto p-4"
+                @submit.prevent="formData.id ? updateQuest() : submitForm()">
                 <form class="grid md:grid-cols-2 gap-3">
                     <div class="">
                         <label for="title" class="block text-xs font-semibold text-gray-800 mb-1">Name <span
@@ -233,26 +238,30 @@ const deleteQuest = async (id) => {
                             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
                             rows="4" required></textarea>
                     </div>
-                    <div class="">
-                        <label for="totalMilestones" class="block text-xs font-semibold text-gray-800 mb-1">Total
-                            Milstones <span class="text-red-600 text-sm">*</span></label>
-                        <input type="number" id="totalMilestones" v-model="formData.totalMilestones"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
-                            required placeholder="1000">
-                    </div>
-                    <div class="">
-                        <label for="pointsPerMilestone" class="block text-xs font-semibold text-gray-800 mb-1">Points
-                            Per Milstone <span class="text-red-600 text-sm">*</span></label>
-                        <input type="number" id="pointsPerMilestone" v-model="formData.pointsPerMilestone"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
-                            required placeholder="1000">
-                    </div>
+                    <div class="md:col-span-2 grid grid-cols-3 gap-3">
+                        <div class="">
+                            <label for="totalMilestones" class="block text-xs font-semibold text-gray-800 mb-1">Total
+                                Milstones <span class="text-red-600 text-sm">*</span></label>
+                            <input type="number" id="totalMilestones" v-model="formData.totalMilestones"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
+                                required placeholder="1000">
+                        </div>
+                        <div class="">
+                            <label for="pointsPerMilestone"
+                                class="block text-xs font-semibold text-gray-800 mb-1">Points
+                                Per Milstone <span class="text-red-600 text-sm">*</span></label>
+                            <input type="number" id="pointsPerMilestone" v-model="formData.pointsPerMilestone"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
+                                required placeholder="1000">
+                        </div>
 
-                    <div class="">
-                        <label for="gtCoin" class="block text-xs font-semibold text-gray-800 mb-1">gtcoin</label>
-                        <input type="number" id="gtCoin" v-model="formData.gtCoin"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
-                            placeholder="1000">
+                        <div class="">
+                            <label for="gtCoin" class="block text-xs font-semibold text-gray-800 mb-1">gtcoin</label>
+                            <input type="number" id="gtCoin" v-model="formData.gtCoin"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none  focus:border-red-500 focus:ring-0"
+                                placeholder="1000">
+                        </div>
+
                     </div>
 
                     <div class="">
@@ -274,7 +283,7 @@ const deleteQuest = async (id) => {
                         <PrimaryButton type="submit" :disabled="loading">
                             {{ loading ? 'Saving...' : 'Save' }}
                         </PrimaryButton>
-                        <button type="button" @click="onToggle" :disabled="loading"
+                        <button type="button"@click="toggleModal" :disabled="loading"
                             class="mb-2 md:mb-0 bg-white border border-[#DD4F05] px-4 py-2 text-sm shadow-sm font-medium tracking-wider text-[#DD4F05] rounded-lg hover:bg-[#DD4F05]/10 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[#DD4F05]/50">
                             Close
                         </button>
