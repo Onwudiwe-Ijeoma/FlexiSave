@@ -72,9 +72,12 @@
     </div>
 
     <!-- Savings Plan Cards -->
-    <div class="mb-8 animate-fade-in-up" style="animation-delay: 600ms;">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-xl font-semibold text-gray-800">Savings Plans</h3>
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h3 class="text-xl font-semibold text-gray-800">Savings Plans</h3>
+          <p class="text-sm text-gray-600 mt-1">Your active savings goals</p>
+        </div>
         <button 
           @click="showCreatePlanModal = true"
           class="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg hover:from-orange-600 hover:to-orange-700 flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300"
@@ -85,26 +88,59 @@
           Create New Plan
         </button>
       </div>
-      
-      <!-- Display existing plans -->
-      <div v-if="savingsPlans.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        <div v-for="plan in savingsPlans" :key="plan.id" 
-          class="group bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col"
-        >
-          <!-- Header Section -->
-          <div class="flex flex-col space-y-4">
-            <div class="flex items-start gap-4">
-              <div :style="{ backgroundColor: plan.Color + '20' }" class="p-3 rounded-xl shadow-lg flex-shrink-0">
-                <span class="text-2xl">{{ plan.icon }}</span>
+
+      <!-- Loading State -->
+      <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div v-for="n in 3" :key="n" class="bg-white p-6 rounded-xl shadow-md animate-pulse">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-12 h-12 bg-gray-200 rounded-xl"></div>
+            <div class="flex-1">
+              <div class="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div class="h-8 bg-gray-200 rounded"></div>
+            <div class="h-4 bg-gray-200 rounded w-full"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="bg-red-50 p-4 rounded-lg">
+        <p class="text-red-600">{{ error }}</p>
+        <button @click="fetchSavingsPlans" class="text-red-700 underline mt-2">Try Again</button>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="!savingsPlans.length" class="text-center py-12 bg-white rounded-xl border-2 border-dashed border-gray-300">
+        <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4 mx-auto">
+          <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
+        </div>
+        <h4 class="font-semibold text-lg text-gray-800 mb-2">No Savings Plans Yet</h4>
+        <p class="text-gray-500 text-sm">Create your first savings plan to start tracking your goals</p>
+      </div>
+
+      <!-- Savings Plans Display -->
+      <div v-else>
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <div v-for="plan in displayedPlans" :key="plan.id" 
+            class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100"
+          >
+            <div class="flex items-start gap-4 mb-4">
+              <div :style="{ backgroundColor: plan.color + '20' }" class="p-3 rounded-xl shadow-lg">
+                <span class="text-2xl">{{ plan.icon || '💰' }}</span>
               </div>
               <div class="flex-1 min-w-0">
                 <h4 class="font-semibold text-lg truncate">{{ plan.name }}</h4>
                 <p class="text-gray-500 text-sm line-clamp-2">{{ plan.description || 'No description' }}</p>
               </div>
             </div>
-            
-            <!-- Badges -->
-            <div class="flex flex-wrap gap-2">
+
+            <div class="flex flex-wrap gap-2 mb-4">
               <span class="text-xs font-medium px-2 py-1 rounded-full" 
                 :class="plan.shouldLock ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'"
               >
@@ -114,12 +150,8 @@
                 {{ plan.frequency }}
               </span>
             </div>
-          </div>
 
-          <!-- Progress Section -->
-          <div class="space-y-4 mt-4">
-            <!-- Amounts Section -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
               <div class="bg-gray-50 p-3 rounded-lg">
                 <span class="text-gray-600 text-xs block mb-1">Current Amount</span>
                 <span class="font-medium text-gray-900 text-sm md:text-base block">₦{{ formatAmount(plan.amount) }}</span>
@@ -129,8 +161,7 @@
                 <span class="font-medium text-gray-900 text-sm md:text-base block">₦{{ formatAmount(plan.targetAmount) }}</span>
               </div>
             </div>
-            
-            <!-- Progress Bar Section -->
+
             <div class="space-y-2">
               <div class="flex justify-between items-center text-sm text-gray-600">
                 <span>Progress</span>
@@ -148,17 +179,30 @@
             </div>
           </div>
         </div>
-      </div>
-      
-      <!-- Empty state -->
-      <div v-else class="text-center py-12 bg-white/50 rounded-xl border-2 border-dashed border-gray-300">
-        <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4 mx-auto">
-          <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-          </svg>
+
+        <!-- View All Link -->
+        <div v-if="savingsPlans.length > 3" class="text-center mt-6">
+          <button 
+            v-if="!showAllPlans"
+            @click="showAllPlans = true"
+            class="text-orange-600 hover:text-orange-700 font-medium inline-flex items-center gap-2"
+          >
+            View All Savings Plans
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <button 
+            v-else
+            @click="showAllPlans = false"
+            class="text-orange-600 hover:text-orange-700 font-medium inline-flex items-center gap-2"
+          >
+            View Less
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+            </svg>
+          </button>
         </div>
-        <h4 class="font-semibold text-lg text-gray-800 mb-2">No Savings Plans Yet</h4>
-        <p class="text-gray-500 text-sm">Create your first savings plan to start tracking your goals</p>
       </div>
     </div>
 
@@ -188,10 +232,15 @@
               </div>
             </div>
             <div class="text-right">
-              <p class="font-semibold text-orange-600 group-hover:scale-105 transition-transform">
-                {{ formatAmount(transaction.amount) }}
+              <p :class="[
+                'font-semibold group-hover:scale-105 transition-transform',
+                transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
+              ]">
+                {{ transaction.type === 'credit' ? '+' : '-' }}₦{{ formatAmount(Math.abs(transaction.amount)) }}
               </p>
-              <p class="text-xs text-gray-500">Completed</p>
+              <p class="text-xs" :class="transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'">
+                {{ transaction.type === 'credit' ? 'Credit' : 'Debit' }}
+              </p>
             </div>
           </div>
         </div>
@@ -222,148 +271,104 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { personalSavingsService } from '@/services/api';
 import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
 import SaveMoneyModal from '@/components/SaveMoneyModal.vue';
 import WithdrawMoneyModal from '@/components/WithdrawMoneyModal.vue';
 import CreateSavingsPlanModal from '@/components/CreateSavingsPlanModal.vue';
+import 'vue3-toastify/dist/index.css';
 
 // State
 const totalBalance = ref(597475.00);
 const showSaveModal = ref(false);
 const showWithdrawModal = ref(false);
 const showCreatePlanModal = ref(false);
-
-// Initialize savings plans from localStorage or empty array
-const savingsPlans = ref([]);
-
-// Load saved plans on component mount
-onMounted(() => {
-  const savedPlans = localStorage.getItem('savingsPlans');
-  if (savedPlans) {
-    try {
-      savingsPlans.value = JSON.parse(savedPlans);
-    } catch (error) {
-      console.error('Error loading saved plans:', error);
-      savingsPlans.value = [];
-    }
-  }
-});
-
-// Function to save plans to localStorage
-const savePlansToStorage = (plans) => {
-  try {
-    localStorage.setItem('savingsPlans', JSON.stringify(plans));
-  } catch (error) {
-    console.error('Error saving plans:', error);
-    toast.error('Failed to save plans to storage', {
-      position: 'top-right',
-      autoClose: 3000
-    });
-  }
-};
+const showAllPlans = ref(false);
 
 // Sample transactions data
 const transactions = ref([
   {
     id: 1,
-    icon: '🏠',
-    description: 'House Rent savings',
-    date: '01 May, 2024',
-    amount: 2000000.00
+    description: "Savings Deposit",
+    amount: 50000,
+    date: "Today, 2:30 PM",
+    icon: "💰",
+    type: "credit"
   },
   {
     id: 2,
-    icon: '✈️',
-    description: 'Flight Ticket',
-    date: '27 September 2024',
-    amount: 2500000.00
+    description: "Withdrawal to Bank Account",
+    amount: -25000,
+    date: "Yesterday, 4:15 PM",
+    icon: "🏦",
+    type: "debit"
   },
   {
     id: 3,
-    icon: '💰',
-    description: 'Monthly Saving',
-    date: '25 December 2024',
-    amount: 1000000.00
+    description: "Monthly Savings Plan",
+    amount: 100000,
+    date: "Mar 15, 2024",
+    icon: "📅",
+    type: "credit"
+  },
+  {
+    id: 4,
+    description: "Emergency Withdrawal",
+    amount: -15000,
+    date: "Mar 12, 2024",
+    icon: "🚨",
+    type: "debit"
+  },
+  {
+    id: 5,
+    description: "Bonus Savings",
+    amount: 75000,
+    date: "Mar 10, 2024",
+    icon: "⭐",
+    type: "credit"
   }
 ]);
 
-// Handlers
-const handleSave = (data) => {
-  console.log('Saving:', data);
-  totalBalance.value += data.amount;
-  
-  transactions.value.unshift({
-    id: Date.now(),
-    icon: '💰',
-    description: data.description || 'Savings deposit',
-    date: new Date().toLocaleDateString('en-US', { 
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    }),
-    amount: data.amount
-  });
+// Savings plans state
+const savingsPlans = ref([]);
+const isLoading = ref(true);
+const error = ref(null);
+
+// Computed property for displayed plans
+const displayedPlans = computed(() => {
+  return showAllPlans.value ? savingsPlans.value : savingsPlans.value.slice(0, 3);
+});
+
+// Fetch savings plans from API
+const fetchSavingsPlans = async () => {
+  try {
+    isLoading.value = true;
+    error.value = null;
+    const response = await personalSavingsService.getAll();
+    savingsPlans.value = response.data || [];
+  } catch (err) {
+    console.error('Failed to fetch savings plans:', err);
+    error.value = 'Failed to load savings plans. Please try again.';
+    toast.error('Failed to load savings plans', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  } finally {
+    isLoading.value = false;
+  }
 };
 
-const handleWithdraw = (data) => {
-  console.log('Withdrawing:', data);
-  totalBalance.value -= data.amount;
-  
-  transactions.value.unshift({
-    id: Date.now(),
-    icon: '↓',
-    description: data.description || 'Withdrawal',
-    date: new Date().toLocaleDateString('en-US', { 
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    }),
-    amount: -data.amount
-  });
-};
-
-const closeCreatePlanModal = () => {
-  showCreatePlanModal.value = false;
-};
-
-const handleCreatePlan = (planData) => {
-  // Add the plan with the API response data
-  const newPlan = {
-    ...planData,
-    id: planData.id || Date.now(), // Use API-provided ID or fallback
-    icon: getRandomIcon(),
-    Amount: planData.Amount || 0,
-    progress: 0
-  };
-  
-  // Add the new plan to the beginning of the array
-  savingsPlans.value.unshift(newPlan);
-  
-  // Save updated plans to localStorage
-  savePlansToStorage(savingsPlans.value);
-  
-  // Show success toast
-  toast.success('Savings plan created successfully!', {
-    position: 'top-right',
-    autoClose: 3000
-  });
-  
-  closeCreatePlanModal();
-};
-
-const getRandomIcon = () => {
-  const icons = ['🎯', '💰', '🏠', '✈️', '🚗', '📱', '💻', '👕', '📚', '🎮'];
-  return icons[Math.floor(Math.random() * icons.length)];
-};
-
-// Utilities
+// Format amount utility
 const formatAmount = (value) => {
-  return new Intl.NumberFormat('en-NG').format(value);
+  return new Intl.NumberFormat('en-NG').format(value || 0);
 };
-</script>
 
+// Fetch plans when component mounts
+onMounted(() => {
+  fetchSavingsPlans();
+});
+</script>
 <style scoped>
 .savings-container {
   min-height: 100vh;

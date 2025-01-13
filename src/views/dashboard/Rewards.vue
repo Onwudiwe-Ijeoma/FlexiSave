@@ -67,6 +67,110 @@
       </div>
     </div>
 
+    <!-- Achievements Table Section -->
+    <div class="mb-12">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6">
+        <h3 class="text-2xl font-semibold">Achievement History</h3>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">Total Points:</span>
+          <span class="bg-orange-100 text-orange-600 px-3 py-1 rounded-full font-semibold">1,250 GTC</span>
+        </div>
+      </div>
+      
+      <!-- Table view for medium and large screens -->
+      <div class="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+                <th class="py-4 px-6 text-left">Achievement</th>
+                <th class="py-4 px-6 text-left">Date Earned</th>
+                <th class="py-4 px-6 text-left">GtCoin</th>
+                <th class="py-4 px-6 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(achievement, index) in achievements" 
+                  :key="index"
+                  class="border-b border-gray-100 hover:bg-orange-50/50 transition-colors group">
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-xl">
+                      {{ achievement.icon }}
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-900">{{ achievement.name }}</p>
+                      <p class="text-sm text-gray-500">{{ achievement.description }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <span class="text-gray-600">{{ achievement.date }}</span>
+                </td>
+                <td class="py-4 px-6">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-orange-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-semibold text-orange-600">+{{ achievement.points }} GTC</span>
+                  </div>
+                </td>
+                <td class="py-4 px-6">
+                  <span :class="[
+                    'px-3 py-1 rounded-full text-sm font-medium',
+                    achievement.status === 'Completed' ? 'bg-green-100 text-green-700' : 
+                    achievement.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
+                    'bg-gray-100 text-gray-700'
+                  ]">
+                    {{ achievement.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Card view for small screens -->
+      <div class="md:hidden space-y-4">
+        <div v-for="(achievement, index) in achievements" 
+            :key="index"
+            class="bg-white rounded-xl shadow-lg p-4 hover:bg-orange-50/50 transition-colors"
+        >
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-xl shrink-0">
+              {{ achievement.icon }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-gray-900">{{ achievement.name }}</p>
+              <p class="text-sm text-gray-500 mt-1">{{ achievement.description }}</p>
+            </div>
+          </div>
+          
+          <div class="flex flex-wrap gap-3 items-center justify-between mt-4">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-orange-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-semibold text-orange-600">+{{ achievement.points }} GTC</span>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span class="text-sm text-gray-600">{{ achievement.date }}</span>
+              <span :class="[
+                'px-3 py-1 rounded-full text-sm font-medium',
+                achievement.status === 'Completed' ? 'bg-green-100 text-green-700' : 
+                achievement.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
+                'bg-gray-100 text-gray-700'
+              ]">
+                {{ achievement.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- GT Marketplace Section with Modern Cards -->
     <div>
       <div class="flex justify-between items-center mb-6">
@@ -83,15 +187,15 @@
         <div
           v-for="reward in visibleRewards"
           :key="reward.id"
-          class="group bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-all duration-300"
+          class="group bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-all duration-300 flex flex-col"
         >
-          <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-6 relative">
+          <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-4 relative">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
             <div v-if="reward.isPremium" class="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded text-xs text-white">Premium</div>
             <h4 class="font-semibold text-xl text-white mb-2">{{ reward.title }}</h4>
             <p class="text-orange-100">{{ reward.description }}</p>
           </div>
-          <div class="p-6">
+          <div class="p-6 flex-1 flex flex-col">
             <div class="flex justify-between items-center mb-4">
               <span class="text-gray-600">{{ reward.optionLabel }}:</span>
               <div class="flex items-center gap-2">
@@ -101,7 +205,8 @@
                 <span class="font-semibold text-orange-600">{{ reward.coins }} GT Coins</span>
               </div>
             </div>
-            <button class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg group-hover:from-orange-600 group-hover:to-orange-700 transition-all duration-300 flex items-center justify-center gap-2">
+            <div class="flex-1"></div>
+            <button class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg group-hover:from-orange-600 group-hover:to-orange-700 transition-all duration-300 flex items-center justify-center gap-2 mt-4">
               <span>Redeem Now</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -118,6 +223,50 @@
 import { ref, computed } from 'vue'
 
 const showAllRewards = ref(false)
+
+// Achievements data
+const achievements = [
+  {
+    name: "First Savings Goal",
+    description: "Created your first savings target",
+    date: "Mar 15, 2024",
+    points: 100,
+    status: "Completed",
+    icon: "🎯"
+  },
+  {
+    name: "Savings Streak",
+    description: "Maintained savings for 7 days straight",
+    date: "Mar 12, 2024",
+    points: 250,
+    status: "Completed",
+    icon: "🔥"
+  },
+  {
+    name: "Budget Master",
+    description: "Created 3 different savings plans",
+    date: "Mar 10, 2024",
+    points: 300,
+    status: "Completed",
+    icon: "👑"
+  },
+  {
+    name: "Super Saver",
+    description: "Saved ₦100,000 in one month",
+    date: "In Progress",
+    points: 500,
+    status: "In Progress",
+    icon: "💎"
+  },
+  {
+    name: "Investment Guru",
+    description: "Complete 5 savings goals",
+    date: "Locked",
+    points: 1000,
+    status: "Locked",
+    icon: "🌟"
+  }
+]
 
 const allRewards = [
   {

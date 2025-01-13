@@ -4,8 +4,8 @@
     @update:showModal="$emit('close')"
     title="Create New Savings Plan"
   >
-    <div class="w-full max-w-lg" @click.stop>
-      <form @submit.prevent="handleSubmit" class="space-y-4">
+    <div class="w-full flex justify-center" @click.stop>
+      <form @submit.prevent="handleSubmit" class="space-y-4 w-full max-w-xl">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Plan Name</label>
           <input 

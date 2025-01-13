@@ -93,7 +93,24 @@ export const personalSavingsService = {
       throw error;
     }
   },
-  // Add other personal savings endpoints as needed
+  getAll: async () => {
+    try {
+      const response = await api.get('/api/personalsavings');
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  fundPlan: async (planId, fundData) => {
+    try {
+      const response = await api.post(`/api/personalsavings/${planId}/fund`, fundData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
 };
 
 // Error handling

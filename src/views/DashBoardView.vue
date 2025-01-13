@@ -29,6 +29,7 @@
       <div class="nav-right">
         <div class="nav-right-top">
           <img src="@/assets/GTCO.svg" alt="GTCO Logo" class="bank-logo" />
+          <span class="bank-name text-xs">Guaranty Trust Bank Ltd</span>
         </div>
         <div class="nav-right-bottom">
           <button class="nav-button">Online Purchase</button>
@@ -103,7 +104,7 @@
         <div v-if="$route.path === '/dashboard'">
           <div class="main-text">
             <h1 class="font-medium text-2xl mb-2">
-              Good Morning,Daniel Ibuchi
+              Good Morning, Daniel Ibuchi
             </h1>
             <p>
               <span class="text-primary-orange-50 font-bold mr-2 mb-2">
@@ -426,10 +427,21 @@ const handleLogout = () => {
 }
 
 .nav-right-top {
-  /* padding-right: 1rem; */
-  padding-bottom: ;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 0.25rem;
+}
+
+.bank-logo {
+  height: 40px;
+  margin-bottom: 0;
+}
+
+.bank-name {
+  font-size: 12px;
+  color: #333;
+  font-weight: 500;
 }
 
 .nav-right-bottom {
