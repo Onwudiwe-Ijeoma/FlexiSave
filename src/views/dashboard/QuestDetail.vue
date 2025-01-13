@@ -54,7 +54,7 @@ const getOneBoard = async () => {
             ...player,
             rank: formatRank(index + 1),
         }));
-        // console.log(leaderBoard.value);
+        console.log(leaderBoard.value);
     } catch (error) {
         console.error("Error fetching leaderboard:", error);
     }
@@ -74,17 +74,21 @@ const getOneQuest = async () => {
         formattedStartDate: dayjs(questData.startDate).format("MMM D, YYYY"),
         formattedEndDate: dayjs(questData.endDate).format("MMM D, YYYY"),
     };
-    console.log(quest.value);
+    // console.log(quest.value);
 }
 
 
 const joinQuest = async (id) => {
     let response = await questService.joinQuest(id);
+    getOneQuest();
+    getOneBoard();
     tostifyMessage(response.data.message);
 }
 
 const leaveQuest = async (id) => {
     let response = await questService.leaveQuest(id);
+    getOneQuest();
+    getOneBoard();
     tostifyMessage(response.data.message);
 }
 
@@ -105,11 +109,11 @@ const leaveQuest = async (id) => {
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-plus'></i> <span>Contribute</span>
                 </button>
-                <button type="button" @click="joinQuest(quest.id)"
+                <button type="button" @click="joinQuest(quest.id)" v-if="quest.isActive && !quest.isJoined"
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-plus'></i> <span>Join Quest</span>
                 </button>
-                <button type="button" @click="leaveQuest(quest.id)"
+                <button type="button" @click="leaveQuest(quest.id)" v-if="quest.isActive && quest.isJoined"
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-log-out-circle'></i><span>Leave Quest</span>
                 </button>
@@ -119,7 +123,7 @@ const leaveQuest = async (id) => {
 
 
         <section class="flex flex-col flex-wrap pt-5 ">
-            <div class="flex flex-row flex-wrap justify-start">
+            <div class="quest-card flex flex-row flex-wrap justify-start">
                 <div class="flex justify-start text-center m-2 h-24 w-full">
                     <div
                         class="flex-shrink-0 rounded-full bg-gray-100 w-24 h-24 border border-[#e65100] z-10 flex justify-center items-center">
@@ -135,7 +139,7 @@ const leaveQuest = async (id) => {
         </section>
         <div class="  text-gray-800  bg-slate-100 p-4 w-full">
             <div class="grid grid-cols-9 gap-4">
-                <div class="col-span-9 sm:col-span-6 md:col-span-3">
+                <div class="quest-card col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
                             class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-blue-100 text-blue-500">
@@ -147,7 +151,7 @@ const leaveQuest = async (id) => {
                         </div>
                     </div>
                 </div>
-                <div class="col-span-9 sm:col-span-6 md:col-span-3">
+                <div class="quest-card col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
                             class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-green-100 text-green-500">
@@ -159,7 +163,7 @@ const leaveQuest = async (id) => {
                         </div>
                     </div>
                 </div>
-                <div class="col-span-9 sm:col-span-6 md:col-span-3">
+                <div class="quest-card col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
                             class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-[#e65100]">
@@ -171,7 +175,7 @@ const leaveQuest = async (id) => {
                         </div>
                     </div>
                 </div>
-                <div class="col-span-9 sm:col-span-6 md:col-span-3">
+                <div class="quest-card col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
                             class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-blue-100 text-blue-500">
@@ -183,7 +187,7 @@ const leaveQuest = async (id) => {
                         </div>
                     </div>
                 </div>
-                <div class="col-span-9 sm:col-span-6 md:col-span-3">
+                <div class="quest-card col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
                             class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-green-100 text-green-500">
@@ -195,7 +199,7 @@ const leaveQuest = async (id) => {
                         </div>
                     </div>
                 </div>
-                <div class="col-span-9 sm:col-span-6 md:col-span-3">
+                <div class="quest-card col-span-9 sm:col-span-6 md:col-span-3">
                     <div class="flex flex-row bg-white shadow-sm rounded p-4">
                         <div
                             class="flex items-center justify-center flex-shrink-0 h-12 w-12 rounded-xl bg-orange-100 text-[#e65100]">
@@ -265,8 +269,28 @@ const leaveQuest = async (id) => {
 </template>
 
 
-<style >
+<style>
 :root {
     --toastify-color-progress-light: orange;
+}
+
+
+.quest-card {
+    transform-origin: center;
+    animation: cardAppear 0.5s ease-out forwards;
+    opacity: 0;
+    height: 100%;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>

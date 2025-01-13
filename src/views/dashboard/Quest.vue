@@ -30,7 +30,7 @@ const toggleModal = () => {
 }
 const openMenu = (id) => {
     isMenuOpen.value == id ? isMenuOpen.value = 0 : isMenuOpen.value = id
-    console.log(isMenuOpen.value);
+    // console.log(isMenuOpen.value);
 
 
 }
@@ -52,6 +52,8 @@ const fetchAndFormatQuests = async () => {
             formattedStartDate: dayjs(quest.startDate).format("MMM D, YYYY h:mm A"),
             formattedEndDate: dayjs(quest.endDate).format("MMM D, YYYY h:mm A"),
         }));
+        console.log(allQuest.value);
+        
     } catch (error) {
         console.error("Failed to fetch quests:", error);
     }
@@ -72,6 +74,7 @@ const submitForm = async () => {
 
 const joinQuest = async (id) => {
     let response = await questService.joinQuest(id);
+    fetchAndFormatQuests()
     tostifyMessage(response.data.message);
 }
 const updateQuest = async () => {
@@ -135,8 +138,8 @@ const deleteQuest = async (id) => {
         </div>
 
         <section v-else class="my-10">
-            <div class="overflow-hidden w-full overflow-x-auto rounded-md border border-neutral-300">
-                <table class="w-full text-left text-sm text-neutral-600">
+            <div class=" overflow-hidden w-full overflow-x-auto rounded-md border border-neutral-300">
+                <table class=" w-full text-left text-sm text-neutral-600">
                     <thead class="border-b border-neutral-300 bg-neutral-50 text-sm text-neutral-900">
                         <tr class="bg-[#e65100]  text-white">
                             <th scope="col" class="p-4">S/N</th>
@@ -147,13 +150,13 @@ const deleteQuest = async (id) => {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-300">
-                        <tr v-for=" quest, key in allQuest" class="hover:bg-orange-100">
+                        <tr v-for=" quest, key in allQuest" class="animate-table hover:bg-gray-50">
                             <td class="p-4">
                                 #{{ key + 1 }}
                             </td>
                             <td class="">
                                 <router-link :to="'/dashboard/quest/' + quest.id"
-                                    class="flex w-max items-center gap-2 p-4 hover:bg-orange-200 ">
+                                    class="flex w-max items-center gap-2 p-4 hover:bg-slate-100 ">
                                     <img class="size-10 rounded-full object-cover"
                                         src="https://penguinui.s3.amazonaws.com/component-assets/avatar-1.webp"
                                         alt="user avatar" />
@@ -187,20 +190,20 @@ const deleteQuest = async (id) => {
                                     <div v-show="isMenuOpen == quest.id"
                                         class="absolute top-7 md:-right-10 flex w-full min-w-[8rem] flex-col overflow-hidden rounded-md border border-neutral-300 bg-neutral-50 shadow z-50"
                                         role="menu">
-                                        <button v-if="quest.isActive" type="button"
+                                        <button v-if="quest.isActive && !quest.isJoined" type="button"
                                             @click="joinQuest(quest.id), openMenu(quest.id)"
                                             class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
                                             role="menuitem"><i class='bx bx-plus-circle'></i> <span>Join</span></button>
+                                            <button v-if="quest.isActive && quest.isJoined" type="button"
+                                                @click="leaveQuest(quest.id), openMenu(quest.id)"
+                                                class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
+                                                role="menuitem"><i class='bx bx-log-out-circle' ></i><span>Leave</span></button>
                                         <button type="button" @click="deleteQuest(quest.id), openMenu(quest.id)"
                                             class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
                                             role="menuitem"><i class='bx bx-trash' ></i><span>Delete</span></button>
                                         <button type="button" @click="getQuest(quest.id), openMenu(quest.id)"
                                             class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
                                             role="menuitem"><i class='bx bx-edit-alt' ></i><span>Update</span></button>
-                                        <button v-if="quest.isActive" type="button"
-                                            @click="leaveQuest(quest.id), openMenu(quest.id)"
-                                            class="bg-neutral-50 px-4 py-2 text-sm text-neutral-600 hover:bg-orange-200 hover:text-neutral-900 focus-visible:bg-neutral-900/10 focus-visible:text-neutral-900 focus-visible:outline-none flex items-center space-x-1"
-                                            role="menuitem"><i class='bx bx-log-out-circle' ></i><span>Leave</span></button>
 
                                     </div>
                                 </div>
@@ -311,5 +314,25 @@ const deleteQuest = async (id) => {
 
 :root {
     --toastify-color-progress-light: orange;
+}
+
+
+.animate-table {
+    transform-origin: center;
+    animation: cardAppear 0.5s ease-out forwards;
+    opacity: 0;
+    height: 100%;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>
