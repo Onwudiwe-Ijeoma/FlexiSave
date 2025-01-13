@@ -75,10 +75,12 @@ export const questService = {
   updateQuest: (formData) => api.put(`/api/quests/${formData.id}`, formData),
   leaveQuest: (questId) => api.post(`/api/quests/${questId}/leave`),
   deleteQuest: (questId) => api.delete(`/api/quests/${questId}`),
+  contributeToQuest: (questId, formData) => api.post(`/api/quests/${questId}/contribute`, formData),
 };
-export const learderBoardService = {
-  getAll: () => api.get("/api/leaderboard?top=10"),
-  // Add other leaderboard-related endpoints as needed
+export const leaderBoardService = {
+  getAll: () => api.get("/api/leaderboard?top=10&questId=16"),
+  getOne: (leadId) => api.get(`/api/leaderboard?top=10&questId=${leadId}`),
+  // create: (questData) => api.post("/api/quests", questData),
 };
 
 export const personalSavingsService = {
