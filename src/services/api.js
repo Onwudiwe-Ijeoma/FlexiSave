@@ -78,7 +78,7 @@ export const questService = {
   contributeToQuest: (questId, formData) => api.post(`/api/quests/${questId}/contribute`, formData),
 };
 export const leaderBoardService = {
-  getAll: () => api.get("/api/leaderboard?top=10&questId=16"),
+  getAll: () => api.get("/api/leaderboard?top=10"),
   getOne: (leadId) => api.get(`/api/leaderboard?top=10&questId=${leadId}`),
   // create: (questData) => api.post("/api/quests", questData),
 };

@@ -217,7 +217,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { learderBoardService } from '@/services/api';
+import { leaderBoardService } from '@/services/api';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
@@ -244,7 +244,7 @@ const calculateRewards = (rank) => {
 const fetchLeaderboardData = async () => {
   try {
     isLoading.value = true;
-    const response = await learderBoardService.getAll();
+    const response = await leaderBoardService.getAll();
     
     console.log('Leaderboard API Response:', response);
     
