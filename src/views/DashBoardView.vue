@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div class="dashboard-container mt-4">
     <!-- Top Navigation -->
     <nav class="top-nav">
       <div class="nav-left">
@@ -11,7 +11,7 @@
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
-                fill="none"
+                fill="white"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
@@ -231,6 +231,77 @@
         </div>
       </div>
     </div>
+
+    <!-- Add this right after the top-nav div -->
+    <div class="mobile-nav md:hidden">
+      <button @click="toggleMobileMenu" class="hamburger-btn" :class="{ 'is-active': isMobileMenuOpen }">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+      
+      <!-- Mobile Menu Overlay -->
+      <div v-show="isMobileMenuOpen" 
+           class="mobile-menu-overlay"
+           :class="{ 'is-active': isMobileMenuOpen }"
+           @click="closeMobileMenu">
+        <div class="mobile-menu" @click.stop>
+          <div class="mobile-menu-header">
+            <img src="@/assets/GTCO.svg" alt="GTCO Logo" class="mobile-logo" />
+            <button @click="closeMobileMenu" class="close-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="mobile-menu-content">
+            <router-link to="/dashboard" class="mobile-menu-item" @click="closeMobileMenu">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Dashboard
+            </router-link>
+            
+            <div class="mobile-menu-section">
+              <button @click="toggleMobileFlexiSave" class="mobile-menu-item flex justify-between items-center w-full">
+                <div class="flex items-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="ml-2">Flexi Save</span>
+                </div>
+                <svg class="w-4 h-4 transform transition-transform" :class="{ 'rotate-180': isMobileFlexiSaveOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              <div v-show="isMobileFlexiSaveOpen" class="mobile-submenu">
+                <router-link to="/dashboard/overview" class="mobile-submenu-item" @click="closeMobileMenu">Overview</router-link>
+                <router-link to="/dashboard/savings" class="mobile-submenu-item" @click="closeMobileMenu">Savings</router-link>
+                <router-link to="/dashboard/quest" class="mobile-submenu-item" @click="closeMobileMenu">Quest</router-link>
+                <router-link to="/dashboard/leaderboards" class="mobile-submenu-item" @click="closeMobileMenu">Leaderboards</router-link>
+                <router-link to="/dashboard/rewards" class="mobile-submenu-item" @click="closeMobileMenu">Rewards</router-link>
+              </div>
+            </div>
+
+            <router-link to="/dashboard/accounts" class="mobile-menu-item" @click="closeMobileMenu">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              My Accounts
+            </router-link>
+
+            <button @click="handleLogout" class="mobile-logout-btn">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -242,9 +313,29 @@ const router = useRouter();
 const user = ref(null);
 const isFlexiSaveOpen = ref(false);
 const hideBalance = ref(false);
+const isMobileMenuOpen = ref(false);
+const isMobileFlexiSaveOpen = ref(false);
 
 const toggleFlexiSave = () => {
   isFlexiSaveOpen.value = !isFlexiSaveOpen.value;
+};
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+  if (isMobileMenuOpen.value) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+};
+
+const toggleMobileFlexiSave = () => {
+  isMobileFlexiSaveOpen.value = !isMobileFlexiSaveOpen.value;
+};
+
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false;
+  document.body.style.overflow = '';
 };
 
 onMounted(() => {
@@ -293,7 +384,29 @@ const handleLogout = () => {
 }
 
 .bank-logo {
-  height: 40px;
+  height: 60px;
+}
+
+.banking-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+}
+
+.home-icon {
+  color: #e65100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.home-icon:hover {
+  background-color: #e65100;
+  color: white;
 }
 
 .internet-banking {
@@ -309,20 +422,25 @@ const handleLogout = () => {
   flex-direction: column;
   align-items: flex-end;
   gap: 0.5rem;
+  justify-content: center;
 }
 
 .nav-right-top {
-  padding-right: 1rem;
+  /* padding-right: 1rem; */
+  padding-bottom: ;
+  display: flex;
+  align-items: center;
 }
 
 .nav-right-bottom {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .bank-logo {
   height: 60px;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0;
 }
 
 .nav-button {
@@ -387,6 +505,8 @@ const handleLogout = () => {
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  overflow-y: auto;
 }
 
 .sidebar-btn {
@@ -765,4 +885,195 @@ tr:hover {
   }
 }
 
+/* Mobile Navigation Styles */
+.mobile-nav {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
+}
+
+.hamburger-btn {
+  width: 48px;
+  height: 48px;
+  background: #e65100;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(230, 81, 0, 0.2);
+  position: relative;
+}
+
+.hamburger-box {
+  position: relative;
+  width: 24px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s;
+  left: 0;
+}
+
+.hamburger-inner {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.hamburger-inner::before {
+  content: '';
+  top: -8px;
+}
+
+.hamburger-inner::after {
+  content: '';
+  bottom: -8px;
+}
+
+.hamburger-btn.is-active .hamburger-inner {
+  transform: rotate(45deg);
+}
+
+.hamburger-btn.is-active .hamburger-inner::before {
+  top: 0;
+  opacity: 0;
+}
+
+.hamburger-btn.is-active .hamburger-inner::after {
+  bottom: 0;
+  transform: rotate(-90deg);
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.mobile-menu-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100%;
+  background-color: white;
+  padding: 1.5rem;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.mobile-menu-overlay.is-active .mobile-menu {
+  transform: translateX(0);
+}
+
+.mobile-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.mobile-logo {
+  height: 32px;
+}
+
+.close-btn {
+  color: #666;
+  padding: 0.5rem;
+}
+
+.mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.mobile-menu-item:hover {
+  background-color: #fff5e6;
+  color: #e65100;
+}
+
+.mobile-submenu {
+  margin-left: 2.5rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid #e65100;
+}
+
+.mobile-submenu-item {
+  display: block;
+  padding: 0.75rem;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.mobile-submenu-item:hover {
+  color: #e65100;
+}
+
+.mobile-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding: 0.75rem;
+  color: #e65100;
+  background: none;
+  border: 1px solid #e65100;
+  border-radius: 8px;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.mobile-logout-btn:hover {
+  background-color: #e65100;
+  color: white;
+}
+
+/* Hide sidebar on mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

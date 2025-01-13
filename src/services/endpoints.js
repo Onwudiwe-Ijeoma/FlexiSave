@@ -6,5 +6,9 @@ export const API_ENDPOINTS = {
     QUEST: {
         GET_ALL: '/api/quests',
         CREATE: '/api/quests'
+    },
+    SAVE: {
+        CREATE: 'api/personalsavings',
+        get: '/api/quests'
     }
 }; 

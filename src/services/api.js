@@ -77,14 +77,22 @@ export const questService = {
   deleteQuest: (questId) => api.delete(`/api/quests/${questId}`),
 };
 export const learderBoardService = {
-  getAll: () => api.get("/api/leaderboard"),
-  // create: (questData) => api.post("/api/quests", questData),
-  // joinQuest: (questId) => api.post(`/api/quests/${questId}/join`),
-  // updateQuest: (formData) => api.put(`/api/quests/${formData.id}`, formData),
-  // leaveQuest: (questId) => api.post(`/api/quests/${questId}/leave`),
-  // deleteQuest: (questId) => api.delete(`/api/quests/${questId}`),
+  getAll: () => api.get("/api/leaderboard?top=10"),
+  // Add other leaderboard-related endpoints as needed
 };
 
+export const personalSavingsService = {
+  create: async (savingsData) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.SAVE.CREATE, savingsData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  // Add other personal savings endpoints as needed
+};
 
 // Error handling
 api.interceptors.response.use(

@@ -304,6 +304,9 @@ table {
 .mt-4 {
   margin-top: 1rem /* 16px */;
 }
+.mt-2 {
+  margin-top: 0.5rem /* 8px */;
+}
 button,
 input,
 optgroup,
