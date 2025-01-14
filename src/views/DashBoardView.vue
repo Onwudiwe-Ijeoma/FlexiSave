@@ -88,6 +88,9 @@
               <router-link to="/dashboard/rewards" class="dropdown-item"
                 >Rewards</router-link
               >
+              <router-link to="/dashboard/wallets" class="dropdown-item"
+                >Wallets</router-link
+              >
             </div>
           </div>
 
@@ -283,6 +286,7 @@
                 <router-link to="/dashboard/quest" class="mobile-submenu-item" @click="closeMobileMenu">Quest</router-link>
                 <router-link to="/dashboard/leaderboards" class="mobile-submenu-item" @click="closeMobileMenu">Leaderboards</router-link>
                 <router-link to="/dashboard/rewards" class="mobile-submenu-item" @click="closeMobileMenu">Rewards</router-link>
+                <router-link to="/dashboard/wallets" class="mobile-submenu-item" @click="closeMobileMenu">Wallets</router-link>
               </div>
             </div>
 
@@ -554,13 +558,45 @@ const handleLogout = () => {
 
 .dropdown-item {
   display: block;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   text-decoration: none;
   color: #333;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .dropdown-item:hover {
-  background-color: #f5f5f5;
+  background-color: #fff5e6;
+  color: #e65100;
+  padding-left: 1.5rem;
+}
+
+.dropdown-item:hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #e65100;
+}
+
+.dropdown-item.router-link-active {
+  background-color: #fff5e6;
+  color: #e65100;
+  font-weight: 500;
+  padding-left: 1.5rem;
+}
+
+.dropdown-item.router-link-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #e65100;
 }
 
 .content-area {
@@ -1052,11 +1088,21 @@ tr:hover {
   padding: 0.75rem;
   color: #666;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .mobile-submenu-item:hover {
   color: #e65100;
+  padding-left: 1.25rem;
+  background-color: #fff5e6;
+}
+
+.mobile-submenu-item.router-link-active {
+  color: #e65100;
+  font-weight: 500;
+  padding-left: 1.25rem;
+  background-color: #fff5e6;
 }
 
 .mobile-logout-btn {

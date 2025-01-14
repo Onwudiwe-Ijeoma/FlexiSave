@@ -80,7 +80,7 @@
                 ⌫
               </button>
               <button type="submit" class="w-12 h-12 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors">
-                →
+                Log In →
               </button>
             </div>
 
@@ -94,7 +94,7 @@
             </div>
 
             <!-- Register Button -->
-            <button type="button" class="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transform transition-all hover:scale-[1.02]">
+            <button type="button" class="w- py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transform transition-all hover:scale-[1.02]">
               CREATE NEW ACCOUNT
             </button>
           </form>

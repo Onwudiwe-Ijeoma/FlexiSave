@@ -245,9 +245,6 @@ const fetchLeaderboardData = async () => {
   try {
     isLoading.value = true;
     const response = await leaderBoardService.getAll();
-    
-    console.log('Leaderboard API Response:', response);
-    
     if (response.data?.topUsers) {
       // Map the topUsers array to our display format
       leaderboardData.value = response.data.topUsers.map((user) => ({
