@@ -1047,7 +1047,7 @@ tr:hover {
 }
 
 .mobile-logo {
-  height: 32px;
+  height: 24px;
 }
 
 .close-btn {
