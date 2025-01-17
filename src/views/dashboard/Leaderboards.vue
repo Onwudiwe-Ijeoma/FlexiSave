@@ -137,7 +137,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="user in leaderboardData" :key="user.rank" 
+              <tr v-for="user in paginatedData" :key="user.rank" 
                   class="group hover:bg-orange-50/50 transition-colors duration-200"
                   :class="{'bg-yellow-50/50': user.rank === 1, 'bg-gray-50/50': user.rank === 2, 'bg-orange-50/50': user.rank === 3}"
               >
@@ -190,20 +190,34 @@
         </div>
 
         <div class="p-4 border-t border-gray-100 flex justify-between items-center">
-          <button class="text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1">
+          <button 
+            @click="previousPage" 
+            :disabled="currentPage === 1"
+            class="text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1"
+            :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
+          >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
             Previous
           </button>
           <div class="flex items-center gap-2">
-            <button class="w-8 h-8 rounded-lg bg-orange-600 text-white flex items-center justify-center">1</button>
-            <button class="w-8 h-8 rounded-lg hover:bg-orange-50 text-gray-600 flex items-center justify-center">2</button>
-            <button class="w-8 h-8 rounded-lg hover:bg-orange-50 text-gray-600 flex items-center justify-center">3</button>
-            <span class="text-gray-400">...</span>
-            <button class="w-8 h-8 rounded-lg hover:bg-orange-50 text-gray-600 flex items-center justify-center">12</button>
+              <button 
+              v-for="page in pageNumbers"
+                :key="page"
+                @click="goToPage(page)"
+                class="w-8 h-8 rounded-lg flex items-center justify-center"
+                :class="currentPage === page ? 'bg-orange-600 text-white' : 'hover:bg-orange-50 text-gray-600'"
+              >
+                {{ page }}
+              </button>
           </div>
-          <button class="text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1">
+          <button 
+            @click="nextPage" 
+            :disabled="currentPage === totalPages"
+            class="text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1"
+            :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
+          >
             Next
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -227,6 +241,59 @@ const error = ref(null);
 const currentUserRank = ref(0);
 const currentUserPoints = ref(0);
 const totalUsers = ref(500);
+
+// Add pagination state
+const currentPage = ref(1);
+const itemsPerPage = 5;
+
+// Computed property for paginated data
+const paginatedData = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return leaderboardData.value.slice(startIndex, endIndex);
+});
+
+// Computed property for total pages
+const totalPages = computed(() => {
+  return Math.ceil(leaderboardData.value.length / itemsPerPage);
+});
+
+// Navigation methods
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+// Generate page numbers for pagination
+const pageNumbers = computed(() => {
+  const pages = [];
+  const maxVisiblePages = 5;
+  let startPage = Math.max(1, currentPage.value - Math.floor(maxVisiblePages / 2));
+  let endPage = Math.min(totalPages.value, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage + 1 < maxVisiblePages) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+});
 
 const formatNumber = (number) => {
   return new Intl.NumberFormat('en-NG').format(number);
@@ -300,10 +367,10 @@ const thirdPlace = computed(() => topThreeUsers.value.find(user => user.rank ===
   @apply bg-gradient-to-br from-gray-50 to-orange-50;
 }
 
-/* Entrance Animations */
+/* Enhanced Entrance Animations */
 @keyframes slideInFromTop {
   0% {
-    transform: translateY(-20px);
+    transform: translateY(-30px);
     opacity: 0;
   }
   100% {
@@ -314,7 +381,7 @@ const thirdPlace = computed(() => topThreeUsers.value.find(user => user.rank ===
 
 @keyframes slideInFromBottom {
   0% {
-    transform: translateY(20px);
+    transform: translateY(30px);
     opacity: 0;
   }
   100% {
@@ -326,53 +393,109 @@ const thirdPlace = computed(() => topThreeUsers.value.find(user => user.rank ===
 @keyframes fadeIn {
   0% {
     opacity: 0;
+    transform: scale(0.95);
   }
   100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
     opacity: 1;
   }
 }
 
-/* Apply animations to specific elements */
+/* Apply enhanced animations to specific elements */
 .bg-gradient-to-r.from-orange-500.to-orange-600 {
-  animation: slideInFromTop 0.6s ease-out forwards;
+  animation: slideInFromTop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
 }
 
 .grid.grid-cols-1.sm\\:grid-cols-3 {
-  animation: fadeIn 0.8s ease-out 0.3s forwards;
+  animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
   opacity: 0;
 }
 
 .bg-white.rounded-2xl.shadow-lg.overflow-hidden {
-  animation: slideInFromBottom 0.6s ease-out 0.6s forwards;
+  animation: slideInFromBottom 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
   opacity: 0;
 }
 
-/* Individual card animations */
+/* Individual card animations with staggered timing */
 .transform.md\\:translate-y-4 {
-  animation: fadeIn 0.5s ease-out 0.9s forwards;
+  animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s forwards;
   opacity: 0;
 }
 
 .transform.-translate-y-4 {
-  animation: fadeIn 0.5s ease-out 0.7s forwards;
+  animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s forwards;
   opacity: 0;
 }
 
 .transform.md\\:translate-y-8 {
-  animation: fadeIn 0.5s ease-out 1.1s forwards;
+  animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 1.1s forwards;
   opacity: 0;
 }
 
+/* Enhanced pulse animation */
 @keyframes pulse {
-  0%, 100% {
+  0% {
     transform: scale(1);
   }
   50% {
     transform: scale(1.05);
   }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Add smooth transitions for interactive elements */
+.group {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover {
+  transform: translateY(-2px);
+}
+
+button {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Add table row animations */
+tbody tr {
+  opacity: 0;
+  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+tbody tr:nth-child(1) { animation-delay: 1.2s; }
+tbody tr:nth-child(2) { animation-delay: 1.3s; }
+tbody tr:nth-child(3) { animation-delay: 1.4s; }
+tbody tr:nth-child(4) { animation-delay: 1.5s; }
+tbody tr:nth-child(5) { animation-delay: 1.6s; }
+
+/* Smooth transition for pagination */
+.pagination-controls {
+  transition: opacity 0.3s ease;
+}
+
+.pagination-controls button:not(:disabled):hover {
+  transform: translateY(-1px);
 }
 </style>

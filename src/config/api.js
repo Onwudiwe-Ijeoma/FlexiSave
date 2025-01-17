@@ -7,8 +7,7 @@ export const API_ENDPOINTS = {
   };
   
 
-// Debug endpoints
-console.log('Login endpoint:', API_ENDPOINTS.login) 
+
 
 
   

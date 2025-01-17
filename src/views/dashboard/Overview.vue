@@ -4,14 +4,14 @@
       <!-- Welcome Section -->
       <div class="welcome-card bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-xl shadow-lg mb-8 animate-fade-in">
         <div class="relative">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div class="flex flex-col md:flex-row justify-center items-center md:items-center gap-4">
             <div class="animate-slide-up">
-              <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Welcome back, John</h2>
+              <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Welcome back, John!</h2>
               <p class="text-orange-50 text-base">Track your financial progress</p>
             </div>
-            <button class="glass-button px-4 py-2 rounded-lg text-white font-medium hover:bg-white/20 transition-all animate-slide-left">
+            <!-- <button class="glass-button px-4 py-2 rounded-lg text-white font-medium hover:bg-white/20 transition-all animate-slide-left">
               View Profile
-            </button>
+            </button> -->
           </div>
         </div>
       </div>

@@ -141,14 +141,25 @@
           <div v-for="plan in displayedPlans" :key="plan.id" 
             class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100"
           >
-            <div class="flex items-start gap-4 mb-4">
-              <div :style="{ backgroundColor: plan.color + '20' }" class="p-3 rounded-xl shadow-lg">
-                <span class="text-2xl">{{ plan.icon || '💰' }}</span>
+            <div class="flex items-start justify-between gap-4 mb-4">
+              <div class="flex items-start gap-4">
+                <div :style="{ backgroundColor: plan.color + '20' }" class="p-3 rounded-xl shadow-lg">
+                  <span class="text-2xl">{{ plan.icon || '💰' }}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-semibold text-lg truncate">{{ plan.name }}</h4>
+                  <p class="text-gray-500 text-sm line-clamp-2">{{ plan.description || 'No description' }}</p>
+                </div>
               </div>
-              <div class="flex-1 min-w-0">
-                <h4 class="font-semibold text-lg truncate">{{ plan.name }}</h4>
-                <p class="text-gray-500 text-sm line-clamp-2">{{ plan.description || 'No description' }}</p>
-              </div>
+              <button 
+                @click="handleDeletePlan(plan)"
+                class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50"
+                title="Delete Plan"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
             </div>
 
             <div class="flex flex-wrap gap-2 mb-4">
@@ -162,27 +173,33 @@
               </span>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 gap-3 mb-4">
               <div class="bg-gray-50 p-3 rounded-lg">
                 <span class="text-gray-600 text-xs block mb-1">Current Amount</span>
-                <span class="font-medium text-gray-900 text-sm md:text-base block">₦{{ formatAmount(plan.amount) }}</span>
+                <div class="flex items-baseline space-x-1 overflow-hidden">
+                  <span class="text-gray-900 text-xs">₦</span>
+                  <span class="font-medium text-gray-900 text-base md:text-lg truncate">{{ formatAmount(plan.amount) }}</span>
+                </div>
               </div>
               <div class="bg-gray-50 p-3 rounded-lg">
                 <span class="text-gray-600 text-xs block mb-1">Target Amount</span>
-                <span class="font-medium text-gray-900 text-sm md:text-base block">₦{{ formatAmount(plan.targetAmount) }}</span>
+                <div class="flex items-baseline space-x-1 overflow-hidden">
+                  <span class="text-gray-900 text-xs">₦</span>
+                  <span class="font-medium text-gray-900 text-base md:text-lg truncate">{{ formatAmount(plan.targetAmount) }}</span>
+                </div>
               </div>
             </div>
 
             <div class="space-y-2">
               <div class="flex justify-between items-center text-sm text-gray-600">
                 <span>Progress</span>
-                <span class="font-medium">{{ ((plan.amount / plan.targetAmount) * 100).toFixed(1) }}%</span>
+                <span class="font-medium">{{ Math.min(((plan.amount / plan.targetAmount) * 100), 100).toFixed(1) }}%</span>
               </div>
-              <div class="w-full bg-gray-200 h-2 rounded-full">
+              <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                 <div 
                   class="h-full rounded-full transition-all duration-500"
                   :style="{ 
-                    width: `${(plan.amount/ plan.targetAmount) * 100}%`,
+                    width: `${Math.min((plan.amount / plan.targetAmount) * 100, 100)}%`,
                     backgroundColor: plan.color 
                   }"
                 ></div>
@@ -229,29 +246,142 @@
         </button>
       </div>
       <div class="p-6">
-        <div v-for="transaction in transactions" :key="transaction.id" 
-          class="transaction-item group hover:bg-gray-50 p-4 rounded-xl transition-all duration-300 cursor-pointer"
-        >
-          <div class="flex items-center justify-between">
+        <!-- Loading State -->
+        <div v-if="isLoadingTransactions" class="space-y-4">
+          <div v-for="n in 3" :key="n" class="animate-pulse flex items-center justify-between p-4">
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-2xl">
-                {{ transaction.icon }}
-              </div>
+              <div class="w-12 h-12 bg-gray-200 rounded-xl"></div>
               <div>
-                <p class="font-medium text-gray-900">{{ transaction.description }}</p>
-                <p class="text-gray-500 text-sm">{{ transaction.date }}</p>
+                <div class="h-4 bg-gray-200 rounded w-48"></div>
+                <div class="h-3 bg-gray-200 rounded w-24 mt-2"></div>
               </div>
             </div>
             <div class="text-right">
-              <p :class="[
-                'font-semibold group-hover:scale-105 transition-transform',
-                transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
-              ]">
-                {{ transaction.type === 'credit' ? '+' : '-' }}₦{{ formatAmount(Math.abs(transaction.amount)) }}
-              </p>
-              <p class="text-xs" :class="transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'">
-                {{ transaction.type === 'credit' ? 'Credit' : 'Debit' }}
-              </p>
+              <div class="h-4 bg-gray-200 rounded w-24"></div>
+              <div class="h-3 bg-gray-200 rounded w-16 mt-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="transactionError" class="text-center py-8">
+          <p class="text-red-600 mb-2">{{ transactionError }}</p>
+          <button 
+            @click="fetchTransactions" 
+            class="text-orange-600 hover:text-orange-700 font-medium"
+          >
+            Try Again
+          </button>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="!transactions.length" class="text-center py-8">
+          <div class="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
+            <span class="text-2xl">📊</span>
+          </div>
+          <h4 class="text-lg font-semibold text-gray-900 mb-2">No Transactions Yet</h4>
+          <p class="text-gray-600">Start saving to see your transactions here</p>
+        </div>
+
+        <!-- Transactions List -->
+        <div v-else>
+          <div v-for="transaction in paginatedTransactions" :key="transaction.id" 
+            class="transaction-item group hover:bg-gray-50 p-4 rounded-xl transition-all duration-300 cursor-pointer"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-2xl">
+                  {{ getTransactionIcon(transaction.type) }}
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900">{{ transaction.description }}</p>
+                  <p class="text-gray-500 text-sm">{{ formatDate(transaction.createdAt) }}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p :class="[
+                  'font-semibold group-hover:scale-105 transition-transform',
+                  isCredit(transaction.type) ? 'text-green-600' : 'text-red-600'
+                ]">
+                  {{ isCredit(transaction.type) ? '+' : '-' }}₦{{ formatAmount(transaction.balance) }}
+                </p>
+                <p class="text-xs" :class="isCredit(transaction.type) ? 'text-green-500' : 'text-red-500'">
+                  {{ transaction.type }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination Controls -->
+          <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4">
+            <div class="flex flex-1 justify-between sm:hidden">
+              <button
+                @click="prevPage"
+                :disabled="currentPage === 1"
+                class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
+              >
+                Previous
+              </button>
+              <button
+                @click="nextPage"
+                :disabled="currentPage === totalPages"
+                class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
+              >
+                Next
+              </button>
+            </div>
+            <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+              <div>
+                <p class="text-sm text-gray-700">
+                  Showing
+                  <span class="font-medium">{{ ((currentPage - 1) * itemsPerPage) + 1 }}</span>
+                  to
+                  <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, transactions.length) }}</span>
+                  of
+                  <span class="font-medium">{{ transactions.length }}</span>
+                  results
+                </p>
+              </div>
+              <div>
+                <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                  <button
+                    @click="prevPage"
+                    :disabled="currentPage === 1"
+                    class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                    :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
+                  >
+                    <span class="sr-only">Previous</span>
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <template v-for="page in totalPages" :key="page">
+                    <button
+                      @click="goToPage(page)"
+                      :class="[
+                        page === currentPage
+                          ? 'relative z-10 inline-flex items-center bg-orange-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600'
+                          : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0',
+                      ]"
+                    >
+                      {{ page }}
+                    </button>
+                  </template>
+                  <button
+                    @click="nextPage"
+                    :disabled="currentPage === totalPages"
+                    class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                    :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
+                  >
+                    <span class="sr-only">Next</span>
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </nav>
+              </div>
             </div>
           </div>
         </div>
@@ -278,17 +408,59 @@
       @close="showCreatePlanModal = false"
       @create="handleCreatePlan"
     />
+
+    <!-- Delete Confirmation Modal -->
+    <DeleteConfirmationModal
+      :is-open="showDeleteModal"
+      :plan-name="planToDelete?.name || ''"
+      @close="showDeleteModal = false"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { personalSavingsService } from '@/services/api';
+import { personalSavingsService, transactionService } from '@/services/api';
 import { toast } from 'vue3-toastify';
 import SaveMoneyModal from '@/components/SaveMoneyModal.vue';
 import WithdrawMoneyModal from '@/components/WithdrawMoneyModal.vue';
 import CreateSavingsPlanModal from '@/components/CreateSavingsPlanModal.vue';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import 'vue3-toastify/dist/index.css';
+
+// Delete savings plan state
+const showDeleteModal = ref(false);
+const planToDelete = ref(null);
+
+// Delete savings plan handlers
+const handleDeletePlan = (plan) => {
+  planToDelete.value = plan;
+  showDeleteModal.value = true;
+};
+
+const confirmDelete = async () => {
+  try {
+    await personalSavingsService.delete(planToDelete.value.id);
+    
+    toast.success('Savings plan deleted successfully!', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+    
+    // Refresh the savings plans list
+    await fetchSavingsPlans();
+  } catch (error) {
+    console.error('Failed to delete savings plan:', error);
+    toast.error('Failed to delete savings plan. Please try again.', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  } finally {
+    planToDelete.value = null;
+    showDeleteModal.value = false;
+  }
+};
 
 // State
 const totalBalance = ref(597475.00);
@@ -303,49 +475,65 @@ watch(hideBalance, (newValue) => {
   localStorage.setItem('hideBalance', newValue);
 });
 
-// Sample transactions data
-const transactions = ref([
-  {
-    id: 1,
-    description: "Savings Deposit",
-    amount: 50000,
-    date: "Today, 2:30 PM",
-    icon: "💰",
-    type: "credit"
-  },
-  {
-    id: 2,
-    description: "Withdrawal to Bank Account",
-    amount: -25000,
-    date: "Yesterday, 4:15 PM",
-    icon: "🏦",
-    type: "debit"
-  },
-  {
-    id: 3,
-    description: "Monthly Savings Plan",
-    amount: 100000,
-    date: "Mar 15, 2024",
-    icon: "📅",
-    type: "credit"
-  },
-  {
-    id: 4,
-    description: "Emergency Withdrawal",
-    amount: -15000,
-    date: "Mar 12, 2024",
-    icon: "🚨",
-    type: "debit"
-  },
-  {
-    id: 5,
-    description: "Bonus Savings",
-    amount: 75000,
-    date: "Mar 10, 2024",
-    icon: "⭐",
-    type: "credit"
+// Transactions state
+const transactions = ref([]);
+const isLoadingTransactions = ref(true);
+const transactionError = ref(null);
+
+// Pagination state
+const currentPage = ref(1);
+const itemsPerPage = ref(5);
+const totalItems = ref(0);
+
+// Computed property for paginated transactions
+const paginatedTransactions = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage.value;
+  const endIndex = startIndex + itemsPerPage.value;
+  return transactions.value.slice(startIndex, endIndex);
+});
+
+// Computed property for total pages
+const totalPages = computed(() => {
+  return Math.ceil(transactions.value.length / itemsPerPage.value);
+});
+
+// Pagination methods
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
   }
-]);
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const goToPage = (page) => {
+  currentPage.value = page;
+};
+
+// Fetch transactions from API
+const fetchTransactions = async () => {
+  try {
+    isLoadingTransactions.value = true;
+    transactionError.value = null;
+    const response = await transactionService.getAll();
+
+    // console.log(response.data);
+    transactions.value = response.data || [];
+  } catch (err) {
+    console.error('Failed to fetch transactions:', err);
+    transactionError.value = 'Failed to load transactions. Please try again.';
+    toast.error('Failed to load transactions', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  } finally {
+    isLoadingTransactions.value = false;
+  }
+};
 
 // Savings plans state
 const savingsPlans = ref([]);
@@ -364,6 +552,7 @@ const fetchSavingsPlans = async () => {
     error.value = null;
     const response = await personalSavingsService.getAll();
     savingsPlans.value = response.data || [];
+
   } catch (err) {
     console.error('Failed to fetch savings plans:', err);
     error.value = 'Failed to load savings plans. Please try again.';
@@ -381,9 +570,111 @@ const formatAmount = (value) => {
   return new Intl.NumberFormat('en-NG').format(value || 0);
 };
 
-// Fetch plans when component mounts
+// Handler functions for modals
+const handleSave = async (saveData) => {
+  try {
+    // Call your API to save money
+    const response = await personalSavingsService.fundPlan(saveData.planId, saveData);
+    toast.success('Successfully saved money!', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+    // Refresh transactions and savings plans
+    fetchTransactions();
+    fetchSavingsPlans();
+    showSaveModal.value = false;
+  } catch (error) {
+    console.error('Failed to save money:', error);
+    toast.error('Failed to save money. Please try again.', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  }
+};
+
+const handleWithdraw = async (withdrawData) => {
+  try {
+    // Call your API to withdraw money
+    const response = await personalSavingsService.withdraw(withdrawData);
+    toast.success('Successfully withdrew money!', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+    // Refresh transactions and savings plans
+    fetchTransactions();
+    fetchSavingsPlans();
+    showWithdrawModal.value = false;
+  } catch (error) {
+    console.error('Failed to withdraw money:', error);
+    toast.error('Failed to withdraw money. Please try again.', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  }
+};
+
+const handleCreatePlan = async (planData) => {
+  try {
+    // Call your API to create a savings plan
+    await personalSavingsService.create(planData);
+    
+    toast.success('Successfully created savings plan!', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+    
+    showCreatePlanModal.value = false;
+  } catch (error) {
+    console.error('Failed to create savings plan:', error);
+    toast.error('Failed to create savings plan. Please try again.', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  }
+};
+
+// Helper functions for transactions
+const getTransactionIcon = (type) => {
+  const icons = {
+    'Deposit': '💰',
+    'Withdrawal': '🏦',
+    'Transfer': '↗️',
+    'Interest': '💫',
+    'Bonus': '🎁'
+  };
+  return icons[type] || '💰';
+};
+
+const isCredit = (type) => {
+  const creditTypes = ['Deposit', 'Interest', 'Bonus'];
+  return creditTypes.includes(type);
+};
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (date.toDateString() === now.toDateString()) {
+    return `Today, ${date.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}`;
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return `Yesterday, ${date.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}`;
+  } else {
+    return date.toLocaleDateString('en-NG', { 
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+};
+
+// Fetch data when component mounts
 onMounted(() => {
   fetchSavingsPlans();
+  fetchTransactions();
 });
 </script>
 <style scoped>

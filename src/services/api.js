@@ -46,7 +46,15 @@ export const userService = {
 };
 
 export const transactionService = {
-  getAll: () => api.get("/transactions"),
+  getAll: async () => {
+    try {
+      const response = await api.get(API_ENDPOINTS.TRANSACTIONS.GET_ALL);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
   create: (transactionData) => api.post("/transactions", transactionData),
   // Add other transaction-related endpoints
 };
@@ -83,6 +91,108 @@ export const leaderBoardService = {
   // create: (questData) => api.post("/api/quests", questData),
 };
 
+export const achievementsService = {
+  getAll: async () => {
+    try {
+      const response = await api.get(API_ENDPOINTS.ACHIEVEMENTS.GET_ALL);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  update: async (achievementId, achievementData) => {
+    try {
+      const response = await api.put(API_ENDPOINTS.ACHIEVEMENTS.UPDATE(achievementId), achievementData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  create: async (achievementData) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.ACHIEVEMENTS.CREATE, achievementData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getOne: async (achievementId) => {
+    try {
+      const response = await api.get(API_ENDPOINTS.ACHIEVEMENTS.GET_ONE(achievementId));
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+};
+
+export const userAchievementsService = {
+  getActive: async () => {
+    try {
+      const response = await api.get(API_ENDPOINTS.USER_ACHIEVEMENTS.ACTIVE);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+};
+
+export const rewardsService = {
+  getAll: async () => {
+    try {
+      const response = await api.get(API_ENDPOINTS.REWARDS.GET_ALL);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  getOne: async (rewardId) => {
+    try {
+      const response = await api.get(API_ENDPOINTS.REWARDS.GET_ONE(rewardId));
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  claim: async (rewardId, claimData = {}) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.REWARDS.CLAIM(rewardId), claimData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+};
+
+export const marketplaceService = {
+  getAll: async () => {
+    try {
+      const response = await api.get(API_ENDPOINTS.MARKETPLACE.GET_ALL);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  purchase: async (productId) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.MARKETPLACE.PURCHASE(productId));
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+};
+
 export const personalSavingsService = {
   create: async (savingsData) => {
     try {
@@ -102,9 +212,36 @@ export const personalSavingsService = {
       throw error;
     }
   },
+  getOne: async (savingId) => {
+    try {
+      const response = await api.get(API_ENDPOINTS.SAVE.GET_ONE(savingId));
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  delete: async (savingId) => {
+    try {
+      const response = await api.delete(`/api/personalsavings/${savingId}`);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
   fundPlan: async (planId, fundData) => {
     try {
       const response = await api.post(`/api/personalsavings/${planId}/fund`, fundData);
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+  update: async (savingId, updateData) => {
+    try {
+      const response = await api.put(API_ENDPOINTS.SAVE.UPDATE(savingId), updateData);
       return response;
     } catch (error) {
       console.error('API Error:', error.response?.data || error.message);

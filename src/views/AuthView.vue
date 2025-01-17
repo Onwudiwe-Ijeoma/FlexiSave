@@ -2,15 +2,16 @@
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-orange-50 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
       <!-- Logo Container -->
-      <div class="flex justify-end mb-6">
-        <img src="@/assets/gtco.svg" alt="GTCO Logo" class="w-32 h-auto transform hover:scale-105 transition-transform duration-300" />
+      <div class="flex justify-end mb-6 flex-col items-end">
+        <img src="@/assets/gtco.svg" alt="GTCO Logo" class="w-20 sm:w-24 md:w-32 h-auto transform hover:scale-105 transition-transform duration-300" />
+        <span class="text-xs sm:text-xs text-gray-700 font-small">Guaranty Trust Bank Ltd</span>
       </div>
 
       <div class="bg-gray-300 p-2 mb-4">
         <h2 class="text-2xl font-bold text-black">INTERNET BANKING</h2>
       </div>
       <!-- Main Content -->
-      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-white rounded-2xl shadow-md overflow-hidden">
         <!-- Header -->
 
         <!-- Login Form -->
@@ -79,8 +80,13 @@
               <button type="button" @click="deleteLastChar" class="w-12 h-12 rounded-lg bg-gray-700 hover:bg-gray-800 text-white font-medium transition-colors">
                 ⌫
               </button>
-              <button type="submit" class="w-12 h-12 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors">
-                Log In →
+            </div>
+            
+            <!-- Login Button -->
+            <div class="flex justify-center mt-4">
+              <button type="submit" class="w-48 h-12 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <span class="material-icons text-lg">login</span>
+                <span>Login</span>
               </button>
             </div>
 
@@ -93,10 +99,6 @@
               <a href="#" class="text-sm text-orange-600 hover:text-orange-700 font-medium">Forgot Password?</a>
             </div>
 
-            <!-- Register Button -->
-            <button type="button" class="w- py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transform transition-all hover:scale-[1.02]">
-              CREATE NEW ACCOUNT
-            </button>
           </form>
         </div>
       </div>
@@ -122,13 +124,17 @@
       </div>
 
       <!-- Footer -->
-      <div class="mt-8 bg-orange-600 text-white text-center py-3 px-4 text-sm rounded-lg">
-        © 2025 Guaranty Trust Bank Limited. RC 152321 (Licensed by the Central Bank of Nigeria). 
-        <div class="flex justify-center gap-4 mt-1">
-          <a href="https://www.gtbank.com" class="hover:underline">GTBANK.COM</a> |
-          <a href="#" class="hover:underline">PRIVACY POLICY</a> |
-          <a href="#" class="hover:underline">TERMS & CONDITIONS</a> |
-          <a href="#" class="hover:underline">WHISTLE BLOWER</a>
+      <div class="mt-8 bg-orange-600 text-white text-center py-2 px-2 sm:px-4 text-[10px] sm:text-xs md:text-sm rounded-lg">
+        <div class="flex flex-wrap items-center justify-center gap-x-1 sm:gap-x-2 gap-y-1">
+          <span class="whitespace-nowrap">© 2025 Guaranty Trust Bank Limited. RC 152321</span>
+          <span class="hidden sm:inline">|</span>
+          <a href="https://www.gtbank.com" class="hover:underline whitespace-nowrap">GTBANK.COM</a>
+          <span class="hidden sm:inline">|</span>
+          <a href="#" class="hover:underline whitespace-nowrap">PRIVACY POLICY</a>
+          <span class="hidden sm:inline">|</span>
+          <a href="#" class="hover:underline whitespace-nowrap">TERMS & CONDITIONS</a>
+          <span class="hidden sm:inline">|</span>
+          <a href="#" class="hover:underline whitespace-nowrap">WHISTLE BLOWER</a>
         </div>
       </div>
     </div>
@@ -266,3 +272,5 @@ const handleFocus = (inputType) => {
   animation: fadeIn 0.5s ease-out forwards;
 }
 </style> 
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" /> 

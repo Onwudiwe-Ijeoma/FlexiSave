@@ -1,46 +1,55 @@
 <template>
-  <div class="dashboard-container mt-4">
+  <div class="dashboard-container mt-7">
     <!-- Top Navigation -->
-    <nav class="top-nav">
-      <div class="nav-left">
-        <div class="nav-left-column">
-          <div class="banking-header">
+    <div class="flex flex-col">
+      <!-- Logo Section -->
+      <div class="w-full flex justify-end px-2 sm:px-4 mt-2 sm:mt-4">
+        <div class="flex flex-col items-end mr-5">
+          <img 
+            src="@/assets/GTCO.svg" 
+            alt="GTCO Logo" 
+            style="height: 60px; width: auto;"
+            class="transition-all duration-300 mb-0.5 sm:mb-1" 
+          />
+          <span class="text-xs sm:text-xs text-gray-700 font-small">Guaranty Trust Bank Ltd</span>
+        </div>
+      </div>
+
+      <!-- Navigation Bar -->
+      <nav class="top-nav">
+        <div class="flex flex-col sm:flex-row items-center justify-between w-full px-2 sm:px-4 py-2 sm:py-3 gap-2 sm:gap-0">
+          <div class="banking-header flex items-center gap-1 sm:gap-2">
             <router-link to="/dashboard" class="home-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="white"
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                class="sm:w-6 sm:h-6"
               >
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
               </svg>
             </router-link>
-            <span class="internet-banking">Internet Banking</span>
+            <span class="internet-banking text-base sm:text-lg md:text-xl">Internet Banking</span>
           </div>
-          <!-- <button class="nav-button">Personal Banking</button> -->
+
+          <div class="flex flex-wrap items-center justify-center gap-1 sm:gap-3">
+            <button class="nav-button text-xs sm:text-sm">Online Purchase</button>
+            <button class="nav-button text-xs sm:text-sm">Transfer To Others</button>
+            <button class="nav-button text-xs sm:text-sm">Transfer To Other Banks(NIP)</button>
+            <button class="nav-button text-xs sm:text-sm">Bill Payment</button>
+            <button class="nav-button text-xs sm:text-sm">Flexi Save</button>
+            <button @click="handleLogout" class="logout-btn text-xs sm:text-sm">Log out</button>
+          </div>
         </div>
-      </div>
-      <div class="nav-right">
-        <div class="nav-right-top">
-          <img src="@/assets/GTCO.svg" alt="GTCO Logo" class="bank-logo" />
-          <span class="bank-name text-xs">Guaranty Trust Bank Ltd</span>
-        </div>
-        <div class="nav-right-bottom">
-          <button class="nav-button">Online Purchase</button>
-          <button class="nav-button">Transfer To Others</button>
-          <button class="nav-button">Transfer To Other Banks(NIP)</button>
-          <button class="nav-button">Bill Payment</button>
-          <button class="nav-button">Flexi Save</button>
-          <button @click="handleLogout" class="logout-btn">Log out</button>
-        </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
 
     <!-- Search Bar -->
     <div class="search-bar">
@@ -88,9 +97,9 @@
               <router-link to="/dashboard/rewards" class="dropdown-item"
                 >Rewards</router-link
               >
-              <router-link to="/dashboard/wallets" class="dropdown-item"
+              <!-- <router-link to="/dashboard/wallets" class="dropdown-item"
                 >Wallets</router-link
-              >
+              > -->
             </div>
           </div>
 
@@ -364,15 +373,17 @@ const handleLogout = () => {
   margin: 0 auto;
   background-color: #fff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 0 1rem;
 }
 
 .top-nav {
   background-color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  transition: all 0.3s ease;
 }
 
 .nav-left {
@@ -389,7 +400,15 @@ const handleLogout = () => {
 }
 
 .bank-logo {
-  height: 60px;
+  height: 30px;
+  width: auto;
+  transition: height 0.3s ease;
+}
+
+.bank-name {
+  font-size: 12px;
+  color: #333;
+  font-weight: 500;
 }
 
 .banking-header {
@@ -417,9 +436,8 @@ const handleLogout = () => {
 .internet-banking {
   font-weight: bold;
   color: #e65100;
-  margin-bottom: 0;
-  font-size: 20px;
-  padding: 0;
+  font-size: 16px;
+  transition: font-size 0.3s ease;
 }
 
 .nav-right {
@@ -433,13 +451,8 @@ const handleLogout = () => {
 .nav-right-top {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   gap: 0.25rem;
-}
-
-.bank-logo {
-  height: 40px;
-  margin-bottom: 0;
 }
 
 .bank-name {
@@ -454,19 +467,18 @@ const handleLogout = () => {
   align-items: center;
 }
 
-.bank-logo {
-  height: 60px;
-  margin-bottom: 0;
-}
+
 
 .nav-button {
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.8rem;
   background-color: #e65100;
-  padding: 0.5rem 1rem;
   border-radius: 4px;
   border: none;
   cursor: pointer;
   color: white;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-button:hover {
@@ -478,10 +490,42 @@ const handleLogout = () => {
 .logout-btn {
   background-color: #e65100;
   color: white;
-  border: none;
+  border: 2px solid #e65100;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.logout-btn:hover {
+  background-color: white;
+  color: #e65100;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(230, 81, 0, 0.2);
+}
+
+.logout-btn:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(230, 81, 0, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(230, 81, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(230, 81, 0, 0);
+  }
+}
+
+.logout-btn:focus {
+  outline: none;
+  animation: pulse 1.5s infinite;
 }
 
 .search-bar {
@@ -1132,6 +1176,208 @@ tr:hover {
   
   .main-content {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Add container styles */
+.dashboard-container {
+  min-height: 100vh;
+  max-width: 1440px;
+  margin: 0 auto;
+  background-color: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 0 1rem; /* Add consistent padding */
+}
+
+/* Update logo section styles */
+.logo-section {
+  padding-right: 1rem; /* Match the padding with nav buttons */
+  margin-bottom: 1rem;
+}
+/* hereee */
+.bank-logo {
+  height: 30px;
+  width: auto;
+  margin-bottom: 0.25rem;
+}
+
+/* Ensure consistent padding in nav */
+.nav-content {
+  padding: 0 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .bank-logo {
+    height: 30px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .bank-logo {
+    height: 30px !important;
+  }
+  
+  .top-nav {
+    padding: 0.5rem;
+  }
+
+  .nav-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+  }
+
+  .internet-banking {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .bank-logo {
+    height: 30px !important;
+  }
+
+  .bank-name {
+    font-size: 10px;
+  }
+
+  .top-nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .internet-banking {
+    font-size: 16px;
+  }
+
+  .flex.items-center.space-x-3 {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+}
+
+/* Update the top navigation layout */
+.top-nav {
+  background-color: white;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+/* Logo section styles */
+.w-full.flex.justify-end.px-4.mt-4 {
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 480px) {
+  .w-full.flex.justify-end.px-4.mt-4 {
+    padding: 0.5rem;
+  }
+
+  .flex.items-center.space-x-3 {
+    gap: 0.25rem;
+  }
+
+  .nav-button, .logout-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .banking-header {
+    gap: 0.25rem;
+  }
+
+  .home-icon {
+    padding: 0.25rem;
+  }
+
+  .internet-banking {
+    font-size: 14px;
+  }
+}
+
+/* Responsive Styles */
+@media (min-width: 640px) {
+  .top-nav {
+    padding: 0.75rem;
+  }
+  
+  .bank-logo {
+    height: 30px;
+  }
+  
+  .bank-name {
+    font-size: 14px;
+  }
+  
+  .nav-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .internet-banking {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 768px) {
+  .top-nav {
+    padding: 0.75rem 1rem;
+  }
+  
+  .bank-logo {
+    height: 30px;
+  }
+  
+  .nav-button {
+    font-size: 0.875rem;
+  }
+  
+  .internet-banking {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .top-nav {
+    padding: 1rem;
+  }
+  
+  .bank-logo {
+    height: 30px;
+  }
+  
+  .nav-button {
+    font-size: 1rem;
+  }
+}
+
+/* Mobile optimization */
+@media (max-width: 639px) {
+  .flex.items-center.space-x-3 {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+  
+  .nav-button {
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .banking-header {
+    gap: 0.5rem;
   }
 }
 </style>

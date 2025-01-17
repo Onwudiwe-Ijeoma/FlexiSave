@@ -15,6 +15,8 @@ const quest = ref([]);
 const leaderBoard = ref([]);
 const showModal = ref(false);
 const loading = ref(false);
+const showLeaveModal = ref(false);
+const questToLeave = ref(null);
 
 const formData = ref({
     amount: '',
@@ -85,11 +87,23 @@ const joinQuest = async (id) => {
     tostifyMessage(response.data.message);
 }
 
-const leaveQuest = async (id) => {
-    let response = await questService.leaveQuest(id);
-    getOneQuest();
-    getOneBoard();
-    tostifyMessage(response.data.message);
+const handleShowLeaveModal = (value) => {
+    showLeaveModal.value = value;
+};
+
+const confirmLeave = async () => {
+    if (questToLeave.value) {
+        let response = await questService.leaveQuest(questToLeave.value);
+        getOneQuest();
+        getOneBoard();
+        tostifyMessage(response.data.message);
+        showLeaveModal.value = false;
+    }
+}
+
+const initiateLeave = (id) => {
+    questToLeave.value = id;
+    showLeaveModal.value = true;
 }
 
 </script>
@@ -97,12 +111,15 @@ const leaveQuest = async (id) => {
     <main class="font-['Poppins']">
         <div class=" flex justify-between items-center">
             <h3 class="text-2xl font-semibold text-gray-800 capitalize flex items-center space-x-1">
-                <span class="flex items-center space-x-3"><span>Quest</span> <i class='bx bx-chevrons-right'></i>
-                    <span>{{ quest.name }}</span></span>
+                <span class="flex items-center space-x-3">
+                    <router-link to="/dashboard/quest" class="hover:text-[#e65100] transition-colors duration-200">Quest</router-link>
+                    <i class='bx bx-chevrons-right'></i>
+                    <span>{{ quest.name }}</span>
+                </span>
                 <span v-if="quest.isActive"
-                    class="inline-flex overflow-hidden rounded-md border border-green-500 px-1 py-0.5 text-xs font-medium text-green-500 bg-green-500/10">Active</span>
+                    class="inline-flex overflow-hidden rounded-md border border-green-500 px-1 py-0.5 text-xs font-medium text-green-500 bg-green-500/10 mr-2">Active</span>
                 <span v-else
-                    class="inline-flex overflow-hidden rounded-md border border-red-500 px-1 py-0.5 text-xs font-medium text-red-500 bg-red-500/10">Pending</span>
+                    class="inline-flex overflow-hidden rounded-md border border-red-500 px-1 py-0.5 text-xs font-medium text-red-500 bg-red-500/10 mr-2">Pending</span>
             </h3>
             <div class="flex items-center">
                 <button type="button" @click="toggleModal"
@@ -113,26 +130,27 @@ const leaveQuest = async (id) => {
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-plus'></i> <span>Join Quest</span>
                 </button>
-                <button type="button" @click="leaveQuest(quest.id)" v-if="quest.isActive && quest.isJoined"
+                <button type="button" @click="initiateLeave(quest.id)" v-if="quest.isActive && quest.isJoined"
                     class="focus:outline-none flex items-center space-x-2 text-white bg-[#e65100]  border border-[#e65100] hover:bg-white hover:text-[#e65100]  focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm px-4 py-2.5 me-2 mb-2 transition-all duration-300 ease-in-out delay-75 whitespace-nowrap">
                     <i class='bx bx-log-out-circle'></i><span>Leave Quest</span>
                 </button>
             </div>
         </div>
-
-
-
-        <section class="flex flex-col flex-wrap pt-5 ">
+<!-- 
+                info section -->
+        <section class="flex flex-col flex-wrap pt-5 my-4">
             <div class="quest-card flex flex-row flex-wrap justify-start">
-                <div class="flex justify-start text-center m-2 h-24 w-full">
+                <div class="flex justify-start text-center m-2 min-h-[120px] w-full">
                     <div
-                        class="flex-shrink-0 rounded-full bg-gray-100 w-24 h-24 border border-[#e65100] z-10 flex justify-center items-center">
+                        class="flex-shrink-0 rounded-full bg-gray-100 w-24 h-24 border-2 border-[#e65100] z-10 flex justify-center items-center shadow-lg">
                         <i class='bx bxs-quote-left text-6xl p-2 w-24 h-24 text-[#e65100] opacity-60'></i>
                     </div>
                     <div
-                        class="flex flex-col text-left bg-[#e65100] text-white text-xs self-center pl-16 pr-4 py-2 -ml-12 w-full">
-                        <h3 class="text-lg  uppercase">{{ quest.name }}</h3>
-                        <p class="w-64 text-xs overflow-y-hidden overflow-x-auto">{{ quest.description }}</p>
+                        class="flex flex-col text-left bg-[#e65100] text-white self-center pl-16 pr-6 py-4 -ml-12 w-full rounded-r-lg shadow-md">
+                        <h3 class="text-xl font-semibold uppercase mb-2">{{ quest.name }}</h3>
+                        <div class="description-container max-h-[150px] overflow-y-auto pr-4 custom-scrollbar">
+                            <p class="text-sm leading-relaxed opacity-90">{{ quest.description }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -265,6 +283,24 @@ const leaveQuest = async (id) => {
                 </form>
             </div>
         </ModalComponent>
+
+        <!-- Leave Quest Confirmation Modal -->
+        <ModalComponent :showModal="showLeaveModal" @update:showModal="handleShowLeaveModal" :title="'Leave Quest'">
+            <div class="p-4 text-center">
+                <i class='bx bx-error-circle text-5xl text-[#e65100] mb-4'></i>
+                <h3 class="mb-5 text-lg font-normal text-gray-500">Are you sure you want to leave this quest?</h3>
+                <div class="flex justify-center gap-4">
+                    <button type="button" @click="confirmLeave"
+                        class="text-white bg-[#e65100] hover:bg-[#e65100]/80 focus:ring-4 focus:outline-none focus:ring-[#e65100]/50 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                        Yes, leave quest
+                    </button>
+                    <button type="button" @click="showLeaveModal = false"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                        No, cancel
+                    </button>
+                </div>
+            </div>
+        </ModalComponent>
     </main>
 </template>
 
@@ -292,5 +328,23 @@ const leaveQuest = async (id) => {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.description-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.description-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.description-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.description-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 </style>

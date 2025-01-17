@@ -77,7 +77,7 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex flex-col gap-3">
           <label class="relative inline-flex items-center cursor-pointer">
             <input 
               v-model="formData.ShouldLock"
@@ -87,7 +87,18 @@
             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
             <span class="ml-3 text-sm font-medium text-gray-700">Lock Savings</span>
           </label>
+
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input 
+              v-model="formData.AutoSave"
+              type="checkbox"
+              class="sr-only peer"
+            >
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+            <span class="ml-3 text-sm font-medium text-gray-700">Auto-Save</span>
+          </label>
         </div>
+      
 
         <div class="flex justify-end gap-3 mt-6">
           <button 
@@ -115,10 +126,12 @@
 <script setup>
 import { ref } from 'vue';
 import { toast } from 'vue3-toastify';
+import { useRouter } from 'vue-router';
 import 'vue3-toastify/dist/index.css';
 import ModalComponent from './ModalComponent.vue';
 import { personalSavingsService } from '@/services/api';
 
+const router = useRouter();
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -163,14 +176,14 @@ const handleClose = () => {
 const handleSubmit = async () => {
   try {
     loading.value = true;
-    const response = await personalSavingsService.create(formData.value);
+    await personalSavingsService.create(formData.value);
     
     toast.success('Savings plan created successfully!', {
       autoClose: 3000
     });
     
-    emit('create', response.data);
     handleClose();
+    router.push('/dashboard/savings');
   } catch (error) {
     console.error('Failed to create savings plan:', error);
     toast.error(error.response?.data?.message || 'Failed to create savings plan', {
