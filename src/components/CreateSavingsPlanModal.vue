@@ -176,14 +176,12 @@ const handleClose = () => {
 const handleSubmit = async () => {
   try {
     loading.value = true;
-    await personalSavingsService.create(formData.value);
+    const response = await personalSavingsService.create(formData.value);
     
-    toast.success('Savings plan created successfully!', {
-      autoClose: 3000
-    });
-    
+    // Emit the created plan data
+    emit('create', response.data);
+    resetForm();
     handleClose();
-    router.push('/dashboard/savings');
   } catch (error) {
     console.error('Failed to create savings plan:', error);
     toast.error(error.response?.data?.message || 'Failed to create savings plan', {

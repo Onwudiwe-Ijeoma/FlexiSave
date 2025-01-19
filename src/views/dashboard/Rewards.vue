@@ -14,18 +14,12 @@
             class="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"
           ></div>
           <p class="text-4xl font-bold relative">{{
-            achievements.reduce(
-              (total, achievement) =>
-                total +
-                (achievement.status === "Completed" ? achievement.points : 0),
-              0
-            )
+           user.totalGtCoins
           }}</p>
           <p class="text-orange-100 relative">GT Coins Available</p>
         </div>
       </div>
     </div>
-
     <!-- Badges Section with 3D Effect -->
     <div class="mb-12">
       <div class="flex justify-between items-center mb-6">
@@ -107,6 +101,239 @@
       </div>
     </div>
 
+      <!-- Rewards Table Section -->
+      <div class="mb-12">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-semibold">My Rewards</h3>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">Total Rewards:</span>
+          <span class="bg-orange-100 text-orange-600 px-3 py-1 rounded-full font-semibold">
+            {{ rewards.length }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="bg-red-50 text-red-600 p-4 rounded-lg text-center">
+        {{ error }}
+      </div>
+
+      <!-- Table view -->
+      <template v-else>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <!-- Desktop View -->
+          <div class="hidden md:block">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+                  <th class="py-4 px-6 text-left">Milestone</th>
+                  <th class="py-4 px-6 text-left">Points</th>
+
+                  <th class="py-4 px-6 text-left">Status</th>
+                  <th class="py-4 px-6 text-left">Date</th>
+                  <th class="py-4 px-6 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="reward in paginatedRewards" 
+                    :key="reward.id"
+                    class="border-b border-gray-100 hover:bg-orange-50/50 transition-colors">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-xl shrink-0">
+                        🎯
+                      </div>
+                      <div>
+                        <p class="font-medium text-gray-900">Milestone {{ reward.milestoneNumber }}</p>
+                        <p class="text-sm text-gray-500">{{ reward.description || 'No description available' }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="font-medium text-gray-900">{{ reward.points }}</span>
+                  </td>
+                 
+                  <td class="py-4 px-6">
+                    <span :class="[
+                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                      reward.isClaimed ? 
+                        'bg-green-100 text-green-800' : 
+                        'bg-yellow-100 text-yellow-800'
+                    ]">
+                      {{ reward.isClaimed ? 'Claimed' : 'Available' }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <span class="text-gray-600">
+                      {{ new Date(reward.createdAt).toLocaleDateString("en-NG", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                      }) }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-6">
+                    <button
+                      v-if="!reward.isClaimed"
+                      @click="claimReward(reward.id)"
+                      :disabled="loadingRewards.has(reward.id)"
+                      class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <template v-if="loadingRewards.has(reward.id)">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Claiming...
+                      </template>
+                      <template v-else>
+                        Claim Reward
+                      </template>
+                    </button>
+                    <span v-else class="text-gray-400 text-sm">Claimed</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile View -->
+          <div class="block md:hidden">
+            <div class="divide-y divide-gray-100">
+              <div v-for="reward in paginatedRewards" 
+                  :key="reward.id"
+                  class="p-4 hover:bg-orange-50/50 transition-colors">
+                <div class="flex items-start gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-xl shrink-0">
+                    🎯
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <h4 class="font-medium text-gray-900">Milestone {{ reward.milestoneNumber }}</h4>
+                        <p class="text-sm text-gray-500 mt-0.5">{{ reward.description || 'No description available' }}</p>
+                      </div>
+                      <span :class="[
+                        'shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                        reward.isClaimed ? 
+                          'bg-green-100 text-green-800' : 
+                          'bg-yellow-100 text-yellow-800'
+                      ]">
+                        {{ reward.isClaimed ? 'Claimed' : 'Available' }}
+                      </span>
+                    </div>
+                    <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
+                      <div class="flex justify-between">
+                        <span class="text-gray-500">Points:</span>
+                        <span class="font-medium">{{ reward.points }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-500">Date:</span>
+                        <span class="font-medium">{{ new Date(reward.createdAt).toLocaleDateString() }}</span>
+                      </div>
+                    </div>
+                    <div class="mt-3" v-if="!reward.isClaimed">
+                      <button
+                        @click="claimReward(reward.id)"
+                        :disabled="loadingRewards.has(reward.id)"
+                        class="w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <template v-if="loadingRewards.has(reward.id)">
+                          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Claiming...
+                        </template>
+                        <template v-else>
+                          Claim Reward
+                        </template>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Pagination Controls for Rewards -->
+      <div class="p-4 border-t border-gray-100 flex justify-between items-center">
+        <button
+          @click="previousRewardsPage"
+          :disabled="currentRewardsPage === 1"
+          class="text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1 transition-all duration-300"
+          :class="{ 'opacity-50 cursor-not-allowed': currentRewardsPage === 1 }"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Previous
+        </button>
+        <div class="hidden sm:flex items-center gap-2">
+          <button
+            v-for="page in rewardsPageNumbers"
+            :key="page"
+            @click="goToRewardsPage(page)"
+            class="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300"
+            :class="
+              currentRewardsPage === page
+                ? 'bg-orange-600 text-white'
+                : 'hover:bg-orange-50 text-gray-600'
+            "
+          >
+            {{ page }}
+          </button>
+        </div>
+        <div class="flex sm:hidden items-center gap-2">
+          <span class="text-sm text-gray-600">
+            Page {{ currentRewardsPage }} of {{ totalRewardsPages }}
+          </span>
+        </div>
+        <button
+          @click="nextRewardsPage"
+          :disabled="currentRewardsPage === totalRewardsPages"
+          class="text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1 transition-all duration-300"
+          :class="{
+            'opacity-50 cursor-not-allowed': currentRewardsPage === totalRewardsPages,
+          }"
+        >
+          Next
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+
+
     <!-- Achievements Table Section -->
     <div class="mb-12">
       <div
@@ -118,12 +345,8 @@
           <span
             class="bg-orange-100 text-orange-600 px-3 py-1 rounded-full font-semibold"
             >{{
-              achievements.reduce(
-                (total, achievement) =>
-                  total +
-                  (achievement.status === "Completed" ? achievement.points : 0),
-                0
-              )
+             user.totalPoints
+
             }}
             GTC</span
           >
@@ -311,8 +534,8 @@
         </button>
       </div>
 
-      <!-- Mobile view pagination -->
-      <div class="md:hidden mt-4 flex justify-between items-center px-4">
+     
+      <!-- <div class="md:hidden mt-4 flex justify-between items-center px-4">
         <button
           @click="previousPage"
           :disabled="currentPage === 1"
@@ -334,9 +557,6 @@
           </svg>
           Previous
         </button>
-        <span class="text-sm text-gray-600"
-          >Page {{ currentPage }} of {{ totalPages }}</span
-        >
         <button
           @click="nextPage"
           :disabled="currentPage === totalPages"
@@ -360,7 +580,7 @@
             />
           </svg>
         </button>
-      </div>
+      </div> -->
     </div>
 
     <!-- GT Marketplace Section with Modern Cards -->
@@ -509,7 +729,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { marketplaceService, achievementsService } from "@/services/api";
+import { marketplaceService, achievementsService,authService,rewardsService } from "@/services/api";
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
@@ -518,7 +738,8 @@ const marketplaceProducts = ref([]);
 const achievements = ref([]);
 const loading = ref(false);
 const error = ref(null);
-const loadingProducts = ref(new Set()); // Track loading state for individual products
+const user = ref({});
+const loadingProducts = ref(new Set());
 
 // Pagination state
 const currentPage = ref(1);
@@ -583,6 +804,79 @@ const visibleProducts = computed(() => {
     : marketplaceProducts.value.slice(0, 3);
 });
 
+// Add new refs for rewards
+const rewards = ref([]);
+const loadingRewards = ref(new Set());
+
+// Add new method to fetch rewards
+const fetchRewards = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const response = await rewardsService.getAll();
+    rewards.value = response.data;
+  } catch (err) {
+    error.value = err.response?.data?.message || "Failed to fetch rewards";
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Add new method to claim rewards
+const claimReward = async (rewardId) => {
+  if (loadingRewards.value.has(rewardId)) return;
+  
+  try {
+    loadingRewards.value.add(rewardId);
+    const response = await rewardsService.claim(rewardId);
+    
+    // Update the reward's status in the list
+    const rewardIndex = rewards.value.findIndex(r => r.id === rewardId);
+    if (rewardIndex !== -1) {
+      rewards.value[rewardIndex] = {
+        ...rewards.value[rewardIndex],
+        isClaimed: true,
+        claimedAt: new Date().toISOString()
+      };
+    }
+    
+    toast.success(response.data.message || 'Reward claimed successfully!', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+    
+    // Refresh user data to update GT Coins
+    await fetchUserData();
+  } catch (error) {
+    console.error('Failed to claim reward:', error);
+    toast.error(error.response?.data?.message || 'Failed to claim reward', {
+      position: 'top-right',
+      autoClose: 3000
+    });
+  } finally {
+    loadingRewards.value.delete(rewardId);
+  }
+};
+
+const fetchUserData = async () => {
+  try {
+    const response = await authService.getCurrentUser();
+    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      user.value = response.data[0]; // Get the first user object from the array
+      localStorage.setItem('user', JSON.stringify(response.data[0]));
+      // console.log('Fresh User Data:', response.data[0]);
+    }
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      router.push('/auth');
+    }
+  }
+};
+
 // Fetch achievements from API
 const fetchAchievements = async () => {
   loading.value = true;
@@ -615,7 +909,7 @@ const fetchMarketplaceProducts = async () => {
   try {
     const response = await marketplaceService.getAll();
     marketplaceProducts.value = response.data;
-    console.log("Marketplace products loaded:", marketplaceProducts.value);
+    // console.log("Marketplace products loaded:", marketplaceProducts.value);
   } catch (err) {
     error.value =
       err.response?.data?.message || "Failed to fetch marketplace products";
@@ -629,7 +923,16 @@ const purchaseProduct = async (productId) => {
   
   try {
     loadingProducts.value.add(productId); // Start loading for this product
-    const response = await marketplaceService.purchase(productId);
+    
+    const purchaseData = {
+      message: "Purchase successful",
+      voucherCode: "",
+      remainingGtc: 480,
+      finalAmount: 785,
+      discount: 15
+    };
+
+    const response = await marketplaceService.purchase(productId, purchaseData);
     
     // Update just the single product's state if needed
     const productIndex = marketplaceProducts.value.findIndex(p => p.id === productId);
@@ -640,7 +943,7 @@ const purchaseProduct = async (productId) => {
       };
     }
     
-    toast.success('Product redeemed successfully!', {
+    toast.success(response.data.message || 'Product redeemed successfully!', {
       position: 'top-right',
       autoClose: 3000
     });
@@ -655,10 +958,68 @@ const purchaseProduct = async (productId) => {
   }
 };
 
-// Call both API endpoints when component mounts
+// Add new pagination state for rewards
+const currentRewardsPage = ref(1);
+const rewardsPerPage = 5;
+
+// Computed property for paginated rewards
+const paginatedRewards = computed(() => {
+  const startIndex = (currentRewardsPage.value - 1) * rewardsPerPage;
+  const endIndex = startIndex + rewardsPerPage;
+  return rewards.value.slice(startIndex, endIndex);
+});
+
+// Computed property for total rewards pages
+const totalRewardsPages = computed(() => {
+  return Math.ceil(rewards.value.length / rewardsPerPage);
+});
+
+// Navigation methods for rewards
+const goToRewardsPage = (page) => {
+  if (page >= 1 && page <= totalRewardsPages.value) {
+    currentRewardsPage.value = page;
+  }
+};
+
+const nextRewardsPage = () => {
+  if (currentRewardsPage.value < totalRewardsPages.value) {
+    currentRewardsPage.value++;
+  }
+};
+
+const previousRewardsPage = () => {
+  if (currentRewardsPage.value > 1) {
+    currentRewardsPage.value--;
+  }
+};
+
+// Generate page numbers for rewards pagination
+const rewardsPageNumbers = computed(() => {
+  const pages = [];
+  const maxVisiblePages = 5;
+  let startPage = Math.max(
+    1,
+    currentRewardsPage.value - Math.floor(maxVisiblePages / 2)
+  );
+  let endPage = Math.min(totalRewardsPages.value, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage + 1 < maxVisiblePages) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+});
+
+// Update onMounted to include fetchRewards
 onMounted(() => {
+  fetchRewards();
   fetchAchievements();
   fetchMarketplaceProducts();
+  fetchUserData();
 });
 </script>
 

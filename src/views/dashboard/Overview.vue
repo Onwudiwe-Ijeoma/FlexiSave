@@ -100,7 +100,7 @@
             <div class="goal-item transition-transform duration-300">
               <div class="flex justify-between items-center mb-2">
                 <div>
-                  <span class="text-base font-medium text-gray-800">House Down Payment</span>
+                  <span class="text-base font-medium text-gray-800">Trips to Dubai</span>
                   <p class="text-sm text-gray-500">₦2,000,000 / ₦3,000,000</p>
                 </div>
                 <span class="text-sm font-semibold text-orange-600">75%</span>
@@ -112,7 +112,7 @@
             <div class="goal-item transition-transform duration-300">
               <div class="flex justify-between items-center mb-2">
                 <div>
-                  <span class="text-base font-medium text-gray-800">New Car</span>
+                  <span class="text-base font-medium text-gray-800">Emergency Fund</span>
                   <p class="text-sm text-gray-500">₦900,000 / ₦2,000,000</p>
                 </div>
                 <span class="text-sm font-semibold text-orange-600">45%</span>
@@ -124,7 +124,7 @@
             <div class="goal-item transition-transform duration-300">
               <div class="flex justify-between items-center mb-2">
                 <div>
-                  <span class="text-base font-medium text-gray-800">Emergency Fund</span>
+                  <span class="text-base font-medium text-gray-800">Trip to Maldives</span>
                   <p class="text-sm text-gray-500">₦450,000 / ₦500,000</p>
                 </div>
                 <span class="text-sm font-semibold text-orange-600">90%</span>

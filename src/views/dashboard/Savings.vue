@@ -1,7 +1,7 @@
 <template>
   <div class="savings-container p-4 md:p-8 bg-gray-50">
     <!-- Main Balance Card -->
-    <div class="balance-card bg-gradient-to-r from-orange-500 to-orange-600 p-6 md:p-8 rounded-xl shadow-lg mb-8 animate-fade-in">
+    <div class="balance-card bg-gradient-to-r from-[#e65100] to-[#e65100]/80 p-6 md:p-8 rounded-xl shadow-lg mb-8 animate-fade-in">
       <div class="relative">
         <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-xl"></div>
         <div class="flex justify-between items-start mb-2">
@@ -26,7 +26,7 @@
           <div class="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto animate-slide-left" style="animation-delay: 400ms;">
             <button 
               @click="showSaveModal = true"
-              class="bg-white text-orange-600 px-6 md:px-8 py-3 rounded-xl flex items-center justify-center gap-2 text-sm md:text-base font-medium hover:bg-orange-50 transition-all duration-300 shadow-md min-w-[140px]"
+              class="bg-white text-[#e65100] px-6 md:px-8 py-3 rounded-xl flex items-center justify-center gap-2 text-sm md:text-base font-medium hover:bg-[#e65100]/10 transition-all duration-300 shadow-md min-w-[140px]"
             >
               Add Funds <span class="text-xl">+</span>
             </button>  
@@ -50,20 +50,20 @@
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
           </svg>
-          +12.5%
+          +5.25% per annum 
         </div>
       </div>
       <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate-fade-in-up" style="animation-delay: 300ms;">
         <div class="text-gray-500 text-sm mb-1">Savings Goal</div>
         <div class="text-xl font-bold">75%</div>
         <div class="w-full bg-gray-200 h-1.5 rounded-full mt-2">
-          <div class="bg-orange-600 h-full rounded-full" style="width: 75%"></div>
+          <div class="bg-[#e65100] h-full rounded-full" style="width: 75%"></div>
         </div>
       </div>
       <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate-fade-in-up" style="animation-delay: 400ms;">
         <div class="text-gray-500 text-sm mb-1">Interest Earned</div>
         <div class="text-xl font-bold">₦12,450</div>
-        <div class="text-orange-600 text-xs flex items-center gap-1 mt-2">
+        <div class="text-[#e65100] text-xs flex items-center gap-1 mt-2">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
           </svg>
@@ -91,7 +91,7 @@
         </div>
         <button 
           @click="showCreatePlanModal = true"
-          class="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg hover:from-orange-600 hover:to-orange-700 flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300"
+          class="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-[#e65100] to-[#e65100]/80 rounded-lg hover:from-[#e65100]/90 hover:to-[#e65100]/70 flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -125,8 +125,8 @@
 
       <!-- Empty State -->
       <div v-else-if="!savingsPlans.length" class="text-center py-12 bg-white rounded-xl border-2 border-dashed border-gray-300">
-        <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4 mx-auto">
-          <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-16 h-16 rounded-full bg-[#e65100] flex items-center justify-center mb-4 mx-auto">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
           </svg>
         </div>
@@ -153,7 +153,7 @@
               </div>
               <button 
                 @click="handleDeletePlan(plan)"
-                class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-red-50"
+                class="text-gray-400 hover:text-[#e65100] transition-colors p-2 rounded-lg hover:bg-[#e65100]/10"
                 title="Delete Plan"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,7 +164,7 @@
 
             <div class="flex flex-wrap gap-2 mb-4">
               <span class="text-xs font-medium px-2 py-1 rounded-full" 
-                :class="plan.shouldLock ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'"
+                :class="plan.shouldLock ? 'bg-[#e65100]/10 text-[#e65100]' : 'bg-green-100 text-green-700'"
               >
                 {{ plan.shouldLock ? 'Locked' : 'Unlocked' }}
               </span>
@@ -213,7 +213,7 @@
           <button 
             v-if="!showAllPlans"
             @click="showAllPlans = true"
-            class="text-orange-600 hover:text-orange-700 font-medium inline-flex items-center gap-2"
+            class="text-[#e65100] hover:text-[#e65100]/90 font-medium inline-flex items-center gap-2"
           >
             View All Savings Plans
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,7 +223,7 @@
           <button 
             v-else
             @click="showAllPlans = false"
-            class="text-orange-600 hover:text-orange-700 font-medium inline-flex items-center gap-2"
+            class="text-[#e65100] hover:text-[#e65100]/90 font-medium inline-flex items-center gap-2"
           >
             View Less
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,7 +236,7 @@
 
     <!-- Transaction History -->
     <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-      <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-2 flex justify-between items-center">
+      <div class="bg-gradient-to-r from-[#e65100] to-[#e65100]/80 p-2 flex justify-between items-center">
         <div>
           <h3 class="text-lg font-semibold text-white">Transaction History</h3>
           <p class="text-gray-200 text-sm">Your recent transactions</p>
@@ -268,7 +268,7 @@
           <p class="text-red-600 mb-2">{{ transactionError }}</p>
           <button 
             @click="fetchTransactions" 
-            class="text-orange-600 hover:text-orange-700 font-medium"
+            class="text-[#e65100] hover:text-[#e65100]/90 font-medium"
           >
             Try Again
           </button>
@@ -276,7 +276,7 @@
 
         <!-- Empty State -->
         <div v-else-if="!transactions.length" class="text-center py-8">
-          <div class="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
+          <div class="w-16 h-16 mx-auto bg-[#e65100] rounded-full flex items-center justify-center mb-4">
             <span class="text-2xl">📊</span>
           </div>
           <h4 class="text-lg font-semibold text-gray-900 mb-2">No Transactions Yet</h4>
@@ -290,7 +290,7 @@
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-2xl">
+                <div class="w-12 h-12 rounded-xl bg-[#e65100] flex items-center justify-center text-2xl">
                   {{ getTransactionIcon(transaction.type) }}
                 </div>
                 <div>
@@ -362,7 +362,7 @@
                       @click="goToPage(page)"
                       :class="[
                         page === currentPage
-                          ? 'relative z-10 inline-flex items-center bg-orange-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600'
+                          ? 'relative z-10 inline-flex items-center bg-[#e65100] px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e65100]'
                           : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0',
                       ]"
                     >
@@ -617,6 +617,9 @@ const handleCreatePlan = async (planData) => {
   try {
     // Call your API to create a savings plan
     await personalSavingsService.create(planData);
+    
+    // Refresh the savings plans list
+    await fetchSavingsPlans();
     
     toast.success('Successfully created savings plan!', {
       position: 'top-right',

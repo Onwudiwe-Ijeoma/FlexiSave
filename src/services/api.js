@@ -38,6 +38,15 @@ export const authService = {
       },
     }),
   register: (userData) => api.post(API_ENDPOINTS.AUTH.REGISTER, userData),
+  getCurrentUser: async () => {
+    try {
+      const response = await api.get('api/user/auth');
+      return response;
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
 };
 
 export const userService = {
@@ -182,9 +191,9 @@ export const marketplaceService = {
       throw error;
     }
   },
-  purchase: async (productId) => {
+  purchase: async (productId, purchaseData) => {
     try {
-      const response = await api.post(API_ENDPOINTS.MARKETPLACE.PURCHASE(productId));
+      const response = await api.post(API_ENDPOINTS.MARKETPLACE.PURCHASE(productId), purchaseData);
       return response;
     } catch (error) {
       console.error('API Error:', error.response?.data || error.message);

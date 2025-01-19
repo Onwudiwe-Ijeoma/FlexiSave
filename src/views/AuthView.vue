@@ -190,8 +190,8 @@ const handleSubmit = async () => {
         const response = await authService.login(credentials);
         
         if (response.status === 200) {
+            // console.log('Login Response:', response.data);
             localStorage.setItem('token', response.data.accessToken);
-            
             
             if (response.data.user) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -205,7 +205,7 @@ const handleSubmit = async () => {
         }
     } catch (error) {
         console.error('Login failed:', error);
-        loginError.value = error.response?.data?.message || 'Login failed. Please try again.';
+        loginError.value = error.response?.data?.message || 'Invalid email or password.';
     }
 };
 

@@ -116,7 +116,7 @@
         <div v-if="$route.path === '/dashboard'">
           <div class="main-text">
             <h1 class="font-medium text-2xl mb-2">
-              Good Morning, Daniel Ibuchi
+              Good Morning, {{ user?.firstName }} {{ user?.lastName || '' }}
             </h1>
             <p>
               <span class="text-primary-orange-50 font-bold mr-2 mb-2">
@@ -322,13 +322,44 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { authService } from '@/services/api';
 
 const router = useRouter();
-const user = ref(null);
+const user = ref({});
 const isFlexiSaveOpen = ref(false);
 const hideBalance = ref(false);
 const isMobileMenuOpen = ref(false);
 const isMobileFlexiSaveOpen = ref(false);
+
+const fetchUserData = async () => {
+  try {
+    const response = await authService.getCurrentUser();
+    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      user.value = response.data[0]; // Get the first user object from the array
+      localStorage.setItem('user', JSON.stringify(response.data[0]));
+      console.log('Fresh User Data:', response.data[0]);
+    }
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      router.push('/auth');
+    }
+  }
+};
+
+onMounted(async () => {
+  // First try to get from localStorage for immediate display
+  const userData = localStorage.getItem("user");
+  if (userData) {
+    user.value = JSON.parse(userData);
+  }
+  
+  // Then fetch fresh data from API
+  await fetchUserData();
+});
 
 const toggleFlexiSave = () => {
   isFlexiSaveOpen.value = !isFlexiSaveOpen.value;
@@ -351,13 +382,6 @@ const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
   document.body.style.overflow = '';
 };
-
-onMounted(() => {
-  const userData = localStorage.getItem("user");
-  if (userData) {
-    user.value = JSON.parse(userData);
-  }
-});
 
 const handleLogout = () => {
   localStorage.removeItem("token");

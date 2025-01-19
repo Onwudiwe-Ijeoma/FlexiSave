@@ -79,6 +79,9 @@ const getOneQuest = async () => {
     // console.log(quest.value);
 }
 
+const formatAmount = (value) => {
+  return new Intl.NumberFormat('en-NG').format(value || 0);
+};
 
 const joinQuest = async (id) => {
     let response = await questService.joinQuest(id);
@@ -189,7 +192,7 @@ const initiateLeave = (id) => {
                         </div>
                         <div class="flex flex-col flex-grow ml-4">
                             <div class="text-sm text-gray-500">Target Amount</div>
-                            <div class="font-bold text-lg">{{ quest.targetAmount }}</div>
+                            <div class="font-bold text-lg">{{ formatAmount(quest.targetAmount) }}</div>
                         </div>
                     </div>
                 </div>
