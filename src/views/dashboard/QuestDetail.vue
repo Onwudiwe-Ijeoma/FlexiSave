@@ -246,6 +246,7 @@ const initiateLeave = (id) => {
                             <th scope="col" class="p-4">Name</th>
                             <th scope="col" class="p-4">Rank</th>
                             <th scope="col" class="p-4">Total Points</th>
+                            <th scope="col" class="p-4">Amount</th>
                             <th scope="col" class="p-4">GtCoin</th>
                         </tr>
                     </thead>
@@ -255,7 +256,8 @@ const initiateLeave = (id) => {
                             <td class="p-4 capitalize">{{ player.firstName }}</td>
                             <td class="p-4 font-bold text-[#e65100] bg-[#e65100] bg-opacity-10">{{ player.rank }}</td>
                             <td class="p-4 font-bold">{{ player.totalPoints }}</td>
-                            <td class="p-4 font-bold text-[#e65100] bg-[#e65100] bg-opacity-10">{{ player.gtCoins }}
+                            <td class="p-4 font-bold bg-[#e65100] bg-opacity-10">₦{{ formatAmount(player.questProgress.currentAmount) }}</td>
+                            <td class="p-4 font-bold">{{ player.gtCoins }}
                             </td>
                         </tr>
                     </tbody>

@@ -45,7 +45,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
       <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate-fade-in-up" style="animation-delay: 200ms;">
         <div class="text-gray-500 text-sm mb-1">Monthly Savings</div>
-        <div class="text-xl font-bold">{{ formatAmount(user.savingBalance) }}</div>
+        <div class="text-xl font-bold">₦{{ formatAmount(user.savingBalance) }}</div>
         <div class="text-green-500 text-xs flex items-center gap-1 mt-2">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
