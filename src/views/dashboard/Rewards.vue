@@ -724,6 +724,26 @@
         </div>
       </div>
     </div>
+
+    <!-- Success Modal -->
+    <div v-if="showRedeemSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+        <div class="text-center">
+          <div class="mb-4 text-green-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 class="text-xl font-semibold mb-4">{{ selectedProduct?.name }} Sent Successfully!</h2>
+          <button
+            @click="showRedeemSuccessModal = false"
+            class="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -917,44 +937,13 @@ const fetchMarketplaceProducts = async () => {
   }
 };
 
-const purchaseProduct = async (productId) => {
-  if (loadingProducts.value.has(productId)) return; // Prevent duplicate requests
-  
-  try {
-    loadingProducts.value.add(productId); // Start loading for this product
-    
-    const purchaseData = {
-      message: "Purchase successful",
-      voucherCode: "",
-      remainingGtc: 480,
-      finalAmount: 785,
-      discount: 15
-    };
+const showRedeemSuccessModal = ref(false);
+const selectedProduct = ref(null);
 
-    const response = await marketplaceService.purchase(productId, purchaseData);
-    
-    // Update just the single product's state if needed
-    const productIndex = marketplaceProducts.value.findIndex(p => p.id === productId);
-    if (productIndex !== -1) {
-      marketplaceProducts.value[productIndex] = {
-        ...marketplaceProducts.value[productIndex],
-        ...response.data
-      };
-    }
-    
-    toast.success(response.data.message || 'Product redeemed successfully!', {
-      position: 'top-right',
-      autoClose: 3000
-    });
-  } catch (error) {
-    console.error('Failed to purchase product:', error);
-    toast.error(error.response?.data?.message || 'Failed to redeem product', {
-      position: 'top-right',
-      autoClose: 3000
-    });
-  } finally {
-    loadingProducts.value.delete(productId); // End loading for this product
-  }
+const purchaseProduct = async (productId) => {
+  const product = marketplaceProducts.value.find(p => p.id === productId);
+  selectedProduct.value = product;
+  showRedeemSuccessModal.value = true;
 };
 
 // Add new pagination state for rewards
