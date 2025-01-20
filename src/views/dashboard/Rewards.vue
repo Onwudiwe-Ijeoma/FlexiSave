@@ -872,7 +872,6 @@ const fetchUserData = async () => {
       // Token expired or invalid
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      router.push('/auth');
     }
   }
 };

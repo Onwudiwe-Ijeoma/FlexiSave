@@ -241,7 +241,7 @@ export const personalSavingsService = {
   },
   fundPlan: async (planId, fundData) => {
     try {
-      const response = await api.post(`/api/personalsavings/${planId}/fund`, fundData);
+      const response = await api.put(`api/personalsavings/${planId}`, fundData);
       return response;
     } catch (error) {
       console.error('API Error:', error.response?.data || error.message);

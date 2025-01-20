@@ -18,7 +18,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div class="relative animate-slide-up" style="animation-delay: 200ms;">
             <p class="text-3xl md:text-5xl font-bold text-white">
-              {{ hideBalance ? '••••••••' : formatAmount(totalBalance) }}
+              {{ hideBalance ? '••••••••' : formatAmount(user.balance)}}
               <span class="text-sm text-white/80">NGN</span>
             </p>
             <p class="text-orange-100 text-sm mt-2">+2.5% from last month</p>
@@ -26,7 +26,7 @@
           <div class="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto animate-slide-left" style="animation-delay: 400ms;">
             <button 
               @click="showSaveModal = true"
-              class="bg-white text-[#e65100] px-6 md:px-8 py-3 rounded-xl flex items-center justify-center gap-2 text-sm md:text-base font-medium hover:bg-[#e65100]/10 transition-all duration-300 shadow-md min-w-[140px]"
+              class="bg-white text-[#e65100] px-6 md:px-8 py-3 rounded-xl flex items-center justify-center gap-2 text-sm md:text-base font-medium hover:bg-[#e65100]/10 hover:text-white transition-all duration-300 shadow-md min-w-[140px]"
             >
               Add Funds <span class="text-xl">+</span>
             </button>  
@@ -45,7 +45,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
       <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 animate-fade-in-up" style="animation-delay: 200ms;">
         <div class="text-gray-500 text-sm mb-1">Monthly Savings</div>
-        <div class="text-xl font-bold">₦45,000</div>
+        <div class="text-xl font-bold">{{ formatAmount(user.savingBalance) }}</div>
         <div class="text-green-500 text-xs flex items-center gap-1 mt-2">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
@@ -357,7 +357,7 @@
                       <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
                     </svg>
                   </button>
-                  <template v-for="page in totalPages" :key="page">
+                  <div v-for="page in totalPages" :key="page">
                     <button
                       @click="goToPage(page)"
                       :class="[
@@ -368,7 +368,7 @@
                     >
                       {{ page }}
                     </button>
-                  </template>
+                  </div>
                   <button
                     @click="nextPage"
                     :disabled="currentPage === totalPages"
@@ -421,7 +421,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-import { personalSavingsService, transactionService } from '@/services/api';
+import { personalSavingsService, transactionService,authService } from '@/services/api';
 import { toast } from 'vue3-toastify';
 import SaveMoneyModal from '@/components/SaveMoneyModal.vue';
 import WithdrawMoneyModal from '@/components/WithdrawMoneyModal.vue';
@@ -432,6 +432,7 @@ import 'vue3-toastify/dist/index.css';
 // Delete savings plan state
 const showDeleteModal = ref(false);
 const planToDelete = ref(null);
+const user = ref({});
 
 // Delete savings plan handlers
 const handleDeletePlan = (plan) => {
@@ -463,7 +464,7 @@ const confirmDelete = async () => {
 };
 
 // State
-const totalBalance = ref(597475.00);
+const totalBalance = ref();
 const showSaveModal = ref(false);
 const showWithdrawModal = ref(false);
 const showCreatePlanModal = ref(false);
@@ -574,7 +575,7 @@ const formatAmount = (value) => {
 const handleSave = async (saveData) => {
   try {
     // Call your API to save money
-    const response = await personalSavingsService.fundPlan(saveData.planId, saveData);
+    // const response = await personalSavingsService.fundPlan(saveData.planId, saveData);
     toast.success('Successfully saved money!', {
       position: 'top-right',
       autoClose: 3000
@@ -591,7 +592,23 @@ const handleSave = async (saveData) => {
     });
   }
 };
-
+const fetchUserData = async () => {
+  try {
+    const response = await authService.getCurrentUser();
+    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      user.value = response.data[0]; // Get the first user object from the array
+      localStorage.setItem('user', JSON.stringify(response.data[0]));
+    }
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+     
+    }
+  }
+};
 const handleWithdraw = async (withdrawData) => {
   try {
     // Call your API to withdraw money
@@ -605,21 +622,21 @@ const handleWithdraw = async (withdrawData) => {
     fetchSavingsPlans();
     showWithdrawModal.value = false;
   } catch (error) {
-    console.error('Failed to withdraw money:', error);
-    toast.error('Failed to withdraw money. Please try again.', {
-      position: 'top-right',
-      autoClose: 3000
-    });
+    // console.error('Failed to withdraw money:', error);
+    // toast.error('Failed to withdraw money. Please try again.', {
+    //   position: 'top-right',
+    //   autoClose: 3000
+    // });
   }
 };
 
 const handleCreatePlan = async (planData) => {
+  if (isLoading.value) return; // Prevent multiple submissions
+  
   try {
+    isLoading.value = true;
     // Call your API to create a savings plan
-    await personalSavingsService.create(planData);
-    
-    // Refresh the savings plans list
-    await fetchSavingsPlans();
+    // await personalSavingsService.create(planData);
     
     toast.success('Successfully created savings plan!', {
       position: 'top-right',
@@ -627,12 +644,17 @@ const handleCreatePlan = async (planData) => {
     });
     
     showCreatePlanModal.value = false;
+    
+    // Refresh the savings plans list after modal is closed
+    await fetchSavingsPlans();
   } catch (error) {
     console.error('Failed to create savings plan:', error);
     toast.error('Failed to create savings plan. Please try again.', {
       position: 'top-right',
       autoClose: 3000
     });
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -678,6 +700,11 @@ const formatDate = (dateString) => {
 onMounted(() => {
   fetchSavingsPlans();
   fetchTransactions();
+  const userData = localStorage.getItem("user");
+  if (userData) {
+    user.value = JSON.parse(userData);
+  }
+  fetchUserData();
 });
 </script>
 <style scoped>

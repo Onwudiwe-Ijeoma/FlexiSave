@@ -177,7 +177,6 @@ const handleSubmit = async () => {
   try {
     loading.value = true;
     const response = await personalSavingsService.create(formData.value);
-    
     // Emit the created plan data
     emit('create', response.data);
     resetForm();

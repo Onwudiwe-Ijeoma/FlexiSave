@@ -147,10 +147,10 @@ const handleSave = async () => {
       description: description.value
     });
 
-    toast.success('Successfully added money to savings plan', {
-      position: 'top-right',
-      autoClose: 3000
-    });
+    // toast.success('Successfully added money to savings plan', {
+    //   position: 'top-right',
+    //   autoClose: 3000
+    // });
 
     emit('save', {
       amount: Number(amount.value),

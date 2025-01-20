@@ -6,7 +6,7 @@
         <div class="relative">
           <div class="flex flex-col md:flex-row justify-center items-center md:items-center gap-4">
             <div class="animate-slide-up">
-              <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Welcome back, John!</h2>
+              <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Welcome back, {{ user.firstName }}</h2>
               <p class="text-orange-50 text-base">Track your financial progress</p>
             </div>
             <!-- <button class="glass-button px-4 py-2 rounded-lg text-white font-medium hover:bg-white/20 transition-all animate-slide-left">
@@ -233,11 +233,31 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { authService } from '@/services/api';
 import Chart from 'chart.js/auto';
+const user = ref({});
 
 const savingsChart = ref(null);
+const fetchUserData = async () => {
+  try {
+    const response = await authService.getCurrentUser();
+    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+      user.value = response.data[0]; // Get the first user object from the array
+      localStorage.setItem('user', JSON.stringify(response.data[0]));
 
+    }
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+     
+    }
+  }
+};
 onMounted(() => {
+    fetchUserData();
   const ctx = savingsChart.value.getContext('2d');
   
   new Chart(ctx, {
@@ -306,6 +326,8 @@ onMounted(() => {
       }
     }
   });
+  fetchUserData();
+
 });
 </script>
 
