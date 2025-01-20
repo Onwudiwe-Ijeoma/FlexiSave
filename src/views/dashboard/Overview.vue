@@ -6,7 +6,13 @@
         <div class="relative">
           <div class="flex flex-col md:flex-row justify-center items-center md:items-center gap-4">
             <div class="animate-slide-up">
-              <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Welcome back, {{ user.firstName }}</h2>
+              <h2 class="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-2">
+                Welcome back, {{ user.firstName }}
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white/20 text-white border border-white/30">
+                  <span class="mr-1">👑</span>
+                  Sigma
+                </span>
+              </h2>
               <p class="text-orange-50 text-base">Track your financial progress</p>
             </div>
             <!-- <button class="glass-button px-4 py-2 rounded-lg text-white font-medium hover:bg-white/20 transition-all animate-slide-left">
